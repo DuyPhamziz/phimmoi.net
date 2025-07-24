@@ -21,3 +21,4 @@ COPY . /var/www/html/
 # Chạy composer install để tạo thư mục vendor/
 WORKDIR /var/www/html
 RUN composer install --no-interaction --prefer-dist --optimize-autoloader
+RUN composer dump-autoload
