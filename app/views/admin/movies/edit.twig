@@ -1,0 +1,179 @@
+{% extends 'admin/layouts/basead.twig' %}
+
+{% block title %}
+{{ page_title }}
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-3">{{ page_title }}</h2>
+
+    <form method="POST" action="{{ base_url }}/admin/movies/update/{{ movie.id }}" enctype="multipart/form-data">
+        <ul class="nav nav-tabs flex-wrap" id="movieTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <a class="nav-link active" data-bs-toggle="tab" data-bs-target="#step1" role="tab">1. Thông tin</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" data-bs-toggle="tab" data-bs-target="#step2" role="tab">2. Hình ảnh</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" data-bs-toggle="tab" data-bs-target="#step3" role="tab">3. Thể loại & QG</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" data-bs-toggle="tab" data-bs-target="#step4" role="tab">4. Tập phim</a>   </li>
+        </ul>
+
+        <div class="tab-content p-3 border border-top-0">
+            <!-- Step 1 -->
+            <div class="tab-pane fade show active" id="step1">
+                <div class="row g-3">
+                    <div class="col-md-6"><label class="form-label">Tên phim (VN)</label><input type="text"
+                            class="form-control" name="name_vn" id="name_vn" value="{{ movie.name_vn }}" required></div>
+                    <div class="col-md-6"><label class="form-label">Tên phim (EN)</label><input type="text"
+                            class="form-control" name="name_eng" value="{{ movie.name_eng }}" required></div>
+                    <div class="col-md-12"><label class="form-label">Slug</label>
+                        <div class="d-flex gap-2">
+                            <input type="text" class="form-control" name="slug_movie" id="slug_movie"
+                                value="{{ movie.slug_movie }}" required>
+                            <button type="button" class="btn btn-outline-secondary"
+                                onclick="slug_movie.value = toSlug(name_vn.value)">Tạo slug</button>
+                        </div>
+                    </div>
+                    <div class="col-md-4"><label class="form-label">Thời lượng</label><input type="text"
+                            class="form-control" name="duration" value="{{ movie.duration }}" required></div>
+                    <div class="col-md-4"><label class="form-label">Đạo diễn</label><input type="text"
+                            class="form-control" name="director" value="{{ movie.director }}" required></div>
+                    <div class="col-md-4"><label class="form-label">Diễn viên</label><input type="text"
+                            class="form-control" name="actors" value="{{ movie.actors }}" required></div>
+                    <div class="col-md-4"><label class="form-label">Năm</label><input type="number" class="form-control"
+                            name="year" value="{{ movie.year }}" required></div>
+                    <div class="col-md-4"><label class="form-label">Chất lượng</label><input type="text"
+                            class="form-control" name="quality" value="{{ movie.quality }}" required></div>
+                    <div class="col-md-4"><label class="form-label">Ngôn ngữ</label><input type="text"
+                            class="form-control" name="lang" value="{{ movie.lang }}" required></div>
+                    <div class="col-md-6"><label class="form-label">Loại</label><input type="text" class="form-control"
+                            name="type" value="{{ movie.type }}" required></div>
+                    <div class="col-md-12"><label class="form-label">Mô tả</label><textarea class="form-control"
+                            name="description" rows="4" required>{{ movie.description }}</textarea></div>
+                    <div class="col-12 d-flex justify-content-end">
+                        <button type="button" class="btn btn-primary" onclick="nextTab('step2')">Tiếp theo</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="tab-pane fade" id="step2">
+                <div class="row g-3">
+                    <!-- Poster -->
+                    <div class="col-md-4">
+                        <label class="form-label">Poster (Hiện tại)</label>
+                        <img src="{{ movie.poster_url }}" alt="Poster cũ" class="img-fluid border mb-2">
+                        <label class="form-label mt-2">Poster (Mới chọn)</label>
+                        <img id="poster_preview" class="img-fluid border mb-2" src="#" style="display: none;">
+                        <input type="hidden" name="poster_old" value="{{ movie.poster_url }}">
+                        <input type="file" class="form-control" name="poster_url" id="poster_input" accept="image/*">
+                    </div>
+            
+                    <!-- Thumbnail -->
+                    <div class="col-md-4">
+                        <label class="form-label">Thumbnail (Hiện tại)</label>
+                        <img src="{{ movie.thum_url }}" alt="Thumb cũ" class="img-fluid border mb-2">
+                        <label class="form-label mt-2">Thumbnail (Mới chọn)</label>
+                        <img id="thum_preview" class="img-fluid border mb-2" src="#" style="display: none;">
+                        <input type="hidden" name="thum_old" value="{{ movie.thum_url }}">
+                        <input type="file" class="form-control" name="thum_url" id="thum_input" accept="image/*">
+                    </div>
+            
+                    <!-- Banner -->
+                    <div class="col-md-4">
+                        <label class="form-label">Banner (Hiện tại)</label>
+                        <img src="{{ movie.banner_url }}" alt="Banner cũ" class="img-fluid border mb-2">
+                        <label class="form-label mt-2">Banner (Mới chọn)</label>
+                        <img id="banner_preview" class="img-fluid border mb-2" src="#" style="display: none;">
+                        <input type="hidden" name="banner_old" value="{{ movie.banner_url }}">
+                        <input type="file" class="form-control" name="banner_url" id="banner_input" accept="image/*">
+                    </div>
+            
+                    <div class="col-12 d-flex justify-content-between">
+                        <button type="button" class="btn btn-secondary" onclick="nextTab('step1')">Quay lại</button>
+                        <button type="button" class="btn btn-primary" onclick="nextTab('step3')">Tiếp theo</button>
+                    </div>
+                </div>
+            </div>
+            
+            
+
+            <!-- Step 3 -->
+            <div class="tab-pane fade" id="step3">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Thể loại</label>
+                        <select name="categories[]" id="categories" class="form-select" multiple>
+                            {% for category in categories %}
+                            <option value="{{ category.id }}" {% if category.id in selected_categories %}selected{%
+                                endif %}>{{ category.name_cat }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Quốc gia</label>
+                        <select name="countries[]" id="countries" class="form-select" multiple>
+                            {% for country in countries %}
+                            <option value="{{ country.id }}" {% if country.id in selected_countries %}selected{% endif
+                                %}>{{ country.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-12 d-flex justify-content-between">
+                        <button type="button" class="btn btn-secondary" onclick="nextTab('step2')">Quay lại</button>
+                        <button type="button" class="btn btn-primary" onclick="nextTab('step4')">Tiếp theo</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 4 -->
+            <!-- Hidden input để lưu ID các tập bị xóa -->
+            <input type="hidden" name="deleted_episodes" id="deleted_episodes">
+            
+            <div class="tab-pane fade" id="step4">
+                <div id="episode-list" data-episode-count="{{ episodes|length }}">
+                    {% for episode in episodes %}
+                    <div class="episode-item mb-3 border p-3 rounded position-relative" data-episode-id="{{ episode.id }}">
+                        <input type="hidden" name="episodes[{{ loop.index0 }}][id]" value="{{ episode.id }}">
+                        <input type="hidden" name="episodes[{{ loop.index0 }}][episode_number]"
+                            value="{{ episode.episode_number }}">
+            
+                        <button type="button" class="btn-close position-absolute top-0 end-0" aria-label="Xóa"
+                            onclick="markEpisodeDeleted(this)"></button>
+            
+                        <label class="form-label">Tập {{ episode.episode_number }}</label>
+                        <input type="text" name="episodes[{{ loop.index0 }}][title]" value="{{ episode.title }}"
+                            placeholder="Tên tập" class="form-control mb-2" required>
+            
+                        <input type="text" name="episodes[{{ loop.index0 }}][url]" value="{{ episode.link_m3u8 }}"
+                            placeholder="Link video" class="form-control" required>
+                    </div>
+                    <label class="form-label">Trạng thái</label>
+                    <select name="status_id" class="form-select mt-1" required>
+                        {% for sta in status %}
+                        <option value="{{ sta.id }}" {% if sta.id== movie.status_id %}selected{% endif %}>
+                            {{ sta.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    
+                    {% endfor %}
+                </div>
+            
+                <button type="button" class="btn btn-outline-primary mt-2" onclick="addEpisode()">+ Thêm tập</button>
+            
+                <div class="d-flex justify-content-between mt-3">
+                    <button type="button" class="btn btn-secondary" onclick="nextTab('step3')">Quay lại</button>
+                    <button type="submit" class="btn btn-success">Cập nhật phim</button>
+                </div>
+            </div>
+
+        </div>
+    </form>
+</div>
+{% endblock %}

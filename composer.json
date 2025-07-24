@@ -1,0 +1,25 @@
+{
+    "name": "movie/hp",
+    "description": "Web xem phim",
+    "type": "project",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/"
+        }
+    },
+    "authors": [
+        {
+            "name": "DuyPhamziz",
+            "email": "149025650+DuyPhamziz@users.noreply.github.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "twig/twig": "^3.21",
+        "league/oauth2-client": "^2.8",
+        "league/oauth2-google": "^4.0",
+        "vlucas/phpdotenv": "^5.6",
+        "bramus/router": "^1.6"
+    }
+}

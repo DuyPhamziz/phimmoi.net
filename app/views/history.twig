@@ -1,0 +1,51 @@
+{% extends 'layouts/base.twig' %}
+
+{% block title %}Lịch sử xem phim{% endblock %}
+
+{% block content %}
+<div class="container py-5 text-white">
+    <h2 class="mb-4">Lịch sử xem</h2>
+
+    {% if histories is not empty %}
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+        {% for h in histories %}
+        <div class="col">
+            <div class="card bg-dark h-100 border-0 shadow-sm">
+                <div class="position-relative overflow-hidden">
+                    <img src="{{ h.thum_url | e }}" alt="{{ h.name_vn | e }}" class="card-img-top">
+                    <span class="badge bg-primary position-absolute top-2 end-2">
+                        {{ (h.progress_seconds / h.duration * 100)|round(0) }}%
+                    </span>
+                </div>
+                <div class="card-body text-white d-flex flex-column">
+                    <h5 class="card-title mb-1">{{ h.name_vn | e }}</h5>
+                    <p class="card-text small fst-italic mb-2">{{ h.name_eng | e }}</p>
+
+                    <div class="progress mb-2" style="height: 6px;">
+                        <div class="progress-bar bg-success" role="progressbar"
+                            style="width: '{{ (h.progress_seconds / h.duration * 100)|round(0) }}%';"
+                            aria-valuenow="'{{ (h.progress_seconds / h.duration * 100)|round(0) }}'" aria-valuemin="0"
+                            aria-valuemax="100"></div>
+                    </div>
+
+                    <p class="text-white small mb-3">
+                        Lần cuối xem: {{ h.watched_at|date('d/m/Y H:i') }}
+                    </p>
+
+                    <a href="/{{ h.slug_movie | e }}/{{ h.episode_number | default(1) }}"
+                        class="mt-auto btn btn-sm btn-primary">
+                        Tiếp tục xem
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-5">
+        <p class="h5">Bạn chưa xem phim nào.</p>
+        <a href="/" class="btn btn-outline-light mt-3">Quay lại Trang chủ</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

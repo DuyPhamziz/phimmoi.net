@@ -1,0 +1,56 @@
+.fixed-video {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 320px;
+    z-index: 9999;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+}
+
+/* Thay đổi màu nền của toàn bộ control bar */
+.video-js .vjs-control-bar {
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+/* Thay đổi màu chữ của nút play/pause */
+.video-js .vjs-play-control {
+    color: #ff0000;
+}
+
+/* Thay đổi màu của thanh progress */
+.video-js .vjs-progress-holder {
+    background-color: #222;
+}
+
+.video-js .vjs-play-progress {
+    background-color: #f00;
+}
+
+.video-js .vjs-control-bar {
+    display: flex !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+.video-js.vjs-fullscreen .vjs-control-bar {
+    display: flex !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+.badge.custom-small {
+    font-size: 0.75rem;
+    /* chữ nhỏ vừa */
+    padding: 0.2em 0.5em;
+    /* padding trên dưới nhỏ, trái phải vừa phải */
+    line-height: 1;
+    /* đảm bảo chiều cao dòng vừa với tag */
+    display: inline-flex;
+    align-items: center;
+    /* canh giữa chữ theo chiều dọc */
+    height: 1.5rem;
+    /* chiều cao cố định, bạn có thể chỉnh theo ý */
+    white-space: nowrap;
+    /* không xuống dòng */
+}

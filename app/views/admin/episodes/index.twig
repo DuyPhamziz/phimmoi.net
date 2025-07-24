@@ -1,0 +1,187 @@
+{% extends 'admin/layouts/basead.twig' %}
+
+{% block title %}Danh sách tập phim{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-3">Danh sách tập phim</h2>
+
+    <a href="{{ base_url }}/admin/episodes/create" class="btn btn-primary mb-3">+ Thêm tập phim</a>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle text-center">
+            <thead class="table-dark">
+                <tr>
+                    <th>#</th>
+                    <th>Tên phim</th>
+                    <th>Số tập</th>
+                    <th>Tiêu đề tập</th>
+                    <th>Link video</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if groupedEpisodes is not empty %}
+                {% for movieName, episodes in groupedEpisodes %}
+                {% set movieStatus = episodes[0].status %}
+                {% set statusColor = {
+                'Trailer': 'secondary',
+                'Đang chiếu': 'success',
+                'Tạm dừng': 'warning text-dark',
+                'Full': 'primary'
+                }[movieStatus]|default('dark') %}
+
+                <tr class="table-primary fw-bold">
+                    <td colspan="5" class="text-start ps-3">{{ movieName }}</td>
+                    <td colspan="2">
+                        <span class="badge bg-{{ statusColor }}">{{ movieStatus }}</span>
+                    </td>
+                </tr>
+                <tr>
+                    <form method="POST" action="{{ base_url }}/admin/episodes/create" class="d-flex gap-1 align-middle">
+                        <td>#</td>
+                        <td></td>
+                        <td><input type="number" name="episode_number" class="form-control form-control-sm" required></td>
+                        <td><input type="text" name="title" class="form-control form-control-sm" required></td>
+                        <td><input type="url" name="link_m3u8" class="form-control form-control-sm" required></td>
+                        <td>
+                            <input type="hidden" name="movie_id" value="{{ episodes[0].movie_id }}">
+                            <button type="submit" class="btn btn-sm btn-success">+ Thêm</button>
+                        </td>
+                    </form>           
+                </tr>
+                {% for episode in episodes %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td></td> {# Tên phim đã hiển thị ở trên #}
+                    <td>
+                        {% if episode.total_episode > 1 %}
+                        {{ episode.episode_number }}/{{ episode.total_episode }}
+                        {% else %}
+                        {{ episode.episode_number }}
+                        {% endif %}
+                    </td>
+                    <td>{{ episode.title }}</td>
+                    <td>
+                        <button class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                            data-bs-target="#previewModal{{ episode.id }}">Xem</button>
+
+                        <!-- Modal Video -->
+                        <div class="modal fade" id="previewModal{{ episode.id }}" tabindex="-1"
+                            aria-labelledby="previewModalLabel{{ episode.id }}" aria-hidden="true">
+                            <div class="modal-dialog modal-lg modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Xem trước - {{ episode.title }}</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Đóng"></button>
+                                    </div>
+                                    <div class="modal-body p-0">
+                                        <video id="video-player-{{ episode.id }}"
+                                            class="video-js vjs-default-skin w-100 h-auto" controls preload="auto"
+                                            style="aspect-ratio: 16 / 9; object-fit: contain;" data-setup='{}'>
+                                            <source src="{{ episode.link_m3u8 | e }}" type="application/x-mpegURL" />
+                                            <p class="vjs-no-js">Trình duyệt của bạn không hỗ trợ video.</p>
+                                        </video>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                   
+                    <td>
+                        <div class="d-flex justify-content-center gap-2">
+                            <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editModal{{ episode.id }}">
+                                <i class="fas fa-edit"></i> Sửa       
+                            </button>
+                            <!-- Modal Sửa Tập Phim -->
+                            <div class="modal fade" id="editModal{{ episode.id }}" tabindex="-1" aria-labelledby="editModalLabel{{ episode.id }}"
+                                aria-hidden="true">
+                                <div class="modal-dialog modal-lg">
+                                    <form method="POST" action="{{ base_url }}/admin/episodes/update/{{ episode.id }}" class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="editModalLabel{{ episode.id }}">Sửa tập: {{ episode.title }}</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                                        </div>
+                                        <div class="modal-body row g-3">
+                                            <input type="hidden" name="movie_id" value="{{ episode.movie_id }}">
+                            
+                                            <div class="col-md-4">
+                                                <label class="form-label">Số tập</label>
+                                                <input type="number" name="episode_number" class="form-control" value="{{ episode.episode_number }}"
+                                                    required>
+                                            </div>
+                            
+                                            <div class="col-md-8">
+                                                <label class="form-label">Tiêu đề</label>
+                                                <input type="text" name="title" class="form-control" value="{{ episode.title }}" required>
+                                            </div>
+                            
+                                            <div class="col-12">
+                                                <label class="form-label">Link m3u8</label>
+                                                <input type="url" name="link_m3u8" class="form-control" value="{{ episode.link_m3u8 }}" required>
+                                            </div>
+                                                                    
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="fas fa-save"></i> Lưu thay đổi
+                                            </button>
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+
+                            <form method="POST" action="{{ base_url }}/admin/episodes/delete/{{ episode.id }}"
+                                class="d-inline delete-episode-form">
+                                <button type="button" class="btn btn-sm btn-danger"
+                                    data-episode-name="{{ episode.title }}">
+                                    <i class="fas fa-trash-alt"></i> Xóa
+                                </button>
+                            </form>
+                            
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+                {% endfor %}
+                {% else %}
+                <tr>
+                    <td colspan="7">Chưa có tập phim nào</td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const modals = document.querySelectorAll('.modal');
+
+        modals.forEach(modal => {
+            modal.addEventListener('shown.bs.modal', function () {
+                const video = modal.querySelector('video');
+                if (video && !video.classList.contains('vjs-initialized')) {
+                    videojs(video);
+                    video.classList.add('vjs-initialized');
+                }
+            });
+
+            modal.addEventListener('hidden.bs.modal', function () {
+                const video = modal.querySelector('video');
+                if (video) {
+                    const player = videojs.getPlayer(video.id);
+                    if (player) {
+                        player.pause();
+                        player.currentTime(0);
+                    }
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

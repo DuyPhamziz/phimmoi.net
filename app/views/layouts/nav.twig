@@ -1,0 +1,132 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-nav fixed-top bg-transparent transition-bg shadow-sm" id="mainNav">
+    <div class="container-fluid">
+        <!-- Logo -->
+        <a class="navbar-brand d-flex align-items-center" href="/" style="max-width: 250px;">
+            <img src="/img/logo.png" class="img-fluid me-2" style="width: 40px;" alt="Logo" />
+            <span class="fw-bold text-white">HPphimmoi.net</span>
+        </a>
+
+        <!-- Toggle mobile -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
+            aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Nội dung menu -->
+        <div class="collapse navbar-collapse" id="mainNavbar">
+            <!-- Menu trái -->
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item"><a class="nav-link {% if currentRoute == 'home' %}active{% endif %}" href="/">Trang
+                        chủ</a></li>
+                <li class="nav-item"><a class="nav-link {% if currentRoute == 'phim-bo' %}active{% endif %}"
+                        href="/loc/phim-bo">Phim bộ</a></li>
+                <li class="nav-item"><a class="nav-link {% if currentRoute == 'phim-le' %}active{% endif %}"
+                        href="/loc/phim-le">Phim lẻ</a></li>
+                <li class="nav-item"><a class="nav-link {% if currentRoute == 'hoat-hinh' %}active{% endif %}"
+                        href="/loc/hoat-hinh">Hoạt hình</a></li>
+                <li class="nav-item"><a class="nav-link {% if currentRoute == 'sap-chieu' %}active{% endif %}"
+                        href="/loc/sap-chieu">Sắp chiếu</a></li>
+
+                <!-- Dropdown thể loại -->
+                   <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="categoryDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Thể loại
+                    </a>
+                    <div class="dropdown-menu dropdown-genres p-3" aria-labelledby="categoryDropdown">
+                        <div class="container">
+                            <div class="row row-cols-2 row-cols-md-4 g-2">
+                                {% for category in categories %}
+                                <div class="col">
+                                    <a class="dropdown-item text-white" href="/loc/{{ category.slug_cat }}">{{ category.name_cat }}</a>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                
+                <!-- Dropdown quốc gia -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="countryDropdown" role="button"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        Quốc gia
+                    </a>
+                    <ul class="dropdown-menu dropdown-large p-3" aria-labelledby="countryDropdown">
+                        <div class="container">
+                            <div class="row row-cols-2 row-cols-md-3 g-2">
+                                {% for country in countries %}
+                                <a class="dropdown-item text-danger" href="/loc/{{ country.slug }}">{{ country.name
+                                    }}</a>
+                                {% endfor %}
+
+                            </div>
+                        </div>
+                    </ul>
+
+                </li>
+            </ul>
+
+            </li>
+            <ul>
+                {% for tag in tags %}
+                <li><a href="/tag/{{ tag.slug_tag }}">{{ tag.name_tag }}</a></li>
+                {% endfor %}
+            </ul>
+            </ul>
+
+            <!-- Tìm kiếm -->
+            <form id="searchForm" class="search-form ms-auto">
+                <i class="fas fa-search btn-search-icon"></i>
+                <input type="text" id="searchInput" class="search-input" placeholder="Tìm phim..." required>
+            </form>
+
+            <script>
+                document.getElementById('searchForm').addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    const input = document.getElementById('searchInput').value;
+
+                    const slug = input.toLowerCase()
+                        .normalize("NFD").replace(/[\u0300-\u036f]/g, '')  // bỏ dấu tiếng Việt
+                        .replace(/[^a-z0-9\s]/g, '')                       // bỏ ký tự đặc biệt
+                        .trim().replace(/\s+/g, '-');                      // chuyển thành slug
+
+                    if (slug) {
+                        window.location.href = '/search/' + slug;
+                    }
+                });
+            </script>
+
+
+            <!-- Thành viên -->
+            <div class="ms-2">
+                {% if not session.user %}
+                <a class="btn btn-danger" href="/login">
+                    <i class="fa-solid fa-user"></i> Thành viên
+                </a>
+                {% else %}
+                <div class="dropdown">
+                    <a class="btn btn-outline-light dropdown-toggle d-flex align-items-center gap-2" href="#"
+                        role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="{{ session.user.avatar }}" alt="avatar" width="30" class="rounded-circle border">
+                        <span>{{ session.user.name }}</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end mt-2" aria-labelledby="userDropdown">
+                        {% if session.user.role == 'admin' %}
+                        <li><a class="dropdown-item text-warning" href="/admin">Trang quản trị</a></li>
+                        {% endif %}
+                        <li><a class="dropdown-item text-white" href="/history">Lịch sử xem</a></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li><a class="dropdown-item text-danger" href="/logout">Đăng xuất</a></li>
+                    </ul>
+                </div>
+                {% endif %}
+            </div>
+
+
+
+        </div>
+    </div>
+
+</nav>

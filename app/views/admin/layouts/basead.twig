@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/> 
+    <link rel="icon" href="/img/logo/logo.png" type="image/x-icon" sizes="64x64">
+    <title> {% block title %} Trang Quản trị {% endblock %} </title>
+    {% block style %}
+        {% include  'admin/layouts/styles.twig' %}
+        <style>
+/* Sidebar */
+.sidebar {
+    width: 250px;
+    transition: width 0.3s;
+    background-color: #1e1e2d;
+    min-height: 100vh;
+    overflow: hidden;
+    position: relative;
+    z-index: 1030;
+}
+
+.sidebar.collapsed {
+    width: 80px;
+}
+
+/* Nội dung chính */
+#main-content {
+    padding: 24px;
+    background-color: #f8f9fa;
+    transition: all 0.3s ease;
+}
+
+/* Ẩn chữ trong sidebar khi thu gọn */
+.hide-on-collapse {
+    display: inline-block;
+    transition: opacity 0.3s ease;
+}
+.sidebar.collapsed .hide-on-collapse {
+    opacity: 0;
+    width: 0;
+    overflow: hidden;
+    display: none;
+}
+
+/* Responsive (mobile) */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+    }
+
+    #main-content {
+        padding: 16px;
+    }
+}
+
+
+        </style>
+    {% endblock %}
+</head>
+<body>
+    <div class="d-flex">
+        {% include 'admin/layouts/sidebar.twig' %}
+        <main id="main-content" class="flex-grow-1">
+            {% block content %}
+                
+            {% endblock %}
+        </main>
+    </div>
+     {% include 'admin/layouts/footer.twig' %}
+
+    {% block scripts %}
+        {% include 'admin/layouts/script.twig' %}
+    {% endblock %}
+</body>
+</html>

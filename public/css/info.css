@@ -1,0 +1,85 @@
+.bg-transparent {
+    background-color: #1B1E26;
+}
+
+.nav-tabs .nav-link {
+    color: white;
+    background-color: transparent;
+    border-color: transparent;
+}
+
+.nav-tabs .nav-link.active {
+    color: white;
+    background-color: transparent;
+    border-color: white;
+
+}
+
+.thumbnail-wrapper {
+    height: 90vh;
+    background-size: cover;
+    position: relative;
+    height: 90vh;
+    z-index: 0;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    filter: brightness(50%);
+    position: relative;
+    z-index: 0;
+}
+
+.poster-col {
+    background-color: rgba(255, 255, 255, 0.1);
+    /* nền sáng nhẹ */
+    border-radius: 10px;
+    padding: 15px;
+    margin-top: -40vh;
+    position: relative;
+    z-index: 1;
+}
+
+.content-col {
+    background-color: rgba(0, 0, 0, 0.3);
+    /* nền tối hơn */
+    border-radius: 10px;
+    padding: 15px;
+}
+
+.table-transparent {
+    background-color: transparent;
+}
+
+.table-transparent th,
+.table-transparent td {
+    background-color: transparent !important;
+}
+
+.table-movie-detail th,
+.table-movie-detail td {
+    color: white;
+}
+
+.table-movie-detail th {
+    width: 35%;
+    white-space: nowrap;
+}
+
+.table-movie-detail td {
+    width: 65%;
+}
+
+.btn-episode {
+    background-color: orangered;
+    font-weight: bold;
+    color: white;
+}
+
+.btn-episode:hover {
+    background-color: #1B1E26;
+    font-weight: bold;
+    color: orangered;
+}
+.object-fit-cover {
+    object-fit: cover;
+}

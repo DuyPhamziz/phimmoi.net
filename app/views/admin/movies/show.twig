@@ -1,0 +1,70 @@
+{% extends 'admin/layouts/basead.twig' %}
+
+{% block title %}Thông tin phim - {{ movie.name_vn }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4 text-center text-md-start">Thông tin chi tiết phim</h2>
+
+    <a href="{{ base_url }}/admin/movies" class="btn btn-secondary mb-3">
+        <i class="fas fa-arrow-left"></i> Quay lại danh sách
+    </a>
+
+    {# --- Thông tin chính --- #}
+    <div class="card shadow mb-4">
+        <div class="row g-0">
+            <div class="col-12 col-md-4 text-center p-3 border-bottom border-md-end">
+                <img src="{{ movie.poster_url }}" alt="{{ movie.name_vn }}" class="img-fluid rounded shadow-sm"
+                    style="max-height: 400px;">
+            </div>
+            <div class="col-12 col-md-8 p-4">
+                <h3 class="card-title text-center text-md-start">{{ movie.name_vn }}</h3>
+                <h5 class="text-muted text-center text-md-start">{{ movie.name_eng }}</h5>
+
+                <div class="mb-2"><strong>Thời lượng:</strong> {{ movie.duration }} phút</div>
+                <div class="mb-2"><strong>Đạo diễn:</strong> {{ movie.director }}</div>
+                <div class="mb-2"><strong>Năm sản xuất:</strong> {{ movie.year }}</div>
+                <div class="mb-2"><strong>Chất lượng:</strong> {{ movie.quality }}</div>
+                <div class="mb-2"><strong>Ngôn ngữ:</strong> {{ movie.lang }}</div>
+                <div class="mb-2"><strong>Diễn viên:</strong><br> {{ movie.actors }}</div>
+                <div class="mb-2"><strong>Ngày đăng tải:</strong> {{ movie.created_at|date("H:i d/m/Y") }}</div>
+                <div class="mb-3"><strong>Ngày cập nhật:</strong> {{ movie.updated_at|date("H:i d/m/Y") }}</div>
+
+                <div class="mb-2">
+                    <strong>Thể loại:</strong><br>
+                    {% for cat in movie.categories %}
+                    <span class="badge bg-secondary me-1 mb-1"><i class="fa-solid fa-tag"></i> {{ cat.name_cat }}</span>
+                    {% endfor %}
+                </div>
+
+                <div class="mb-2">
+                    <strong>Tags:</strong><br>
+                    {% for tag in movie.tags %}
+                    <span class="badge bg-warning text-dark me-1 mb-1"> <i class="fa-solid fa-tag"></i> {{ tag.name }}</span>
+                    {% endfor %}
+                </div>
+
+                <hr>
+                <h5>Mô tả:</h5>
+                <p style="white-space: pre-line;">{{ movie.description }}</p>
+            </div>
+        </div>
+    </div>
+
+    {# --- Thumbnail & Banner --- #}
+    <div class="card shadow mb-4">
+        <div class="row g-0">
+            <div class="col-12 col-md-6 text-center p-4 border-bottom border-md-end">
+                <h4 class="mb-3">Thumbnail</h4>
+                <img src="{{ movie.thum_url }}" alt="{{ movie.name_vn }} Thumbnail" class="img-fluid rounded shadow-sm"
+                    style="max-height: 300px;">
+            </div>
+            <div class="col-12 col-md-6 text-center p-4">
+                <h4 class="mb-3">Banner</h4>
+                <img src="{{ movie.banner_url }}" alt="{{ movie.name_vn }} Banner" class="img-fluid rounded shadow-sm"
+                    style="max-height: 300px;">
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,94 @@
+<!-- hotMovie.php -->
+<style>
+  .hover-effect {
+    transition: transform 0.3s ease, opacity 0.3s ease;
+  }
+
+  .hover-effect:hover {
+    transform: scale(1.05);
+    opacity: 0.85;
+    z-index: 2;
+  }
+</style>
+
+<div class="container px-2 mx-auto my-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="text-white fw-bold text-uppercase">📺 Phim lẻ</h4>
+    <a href="/tag/phim-le" class="btn btn-sm btn-secondary">Xem tất cả</a>
+  </div>
+
+  {% if singleMovies|length >= 1 %}
+  <div class="row g-3">
+    <!-- Phim lớn bên trái -->
+    <div class="col-12 col-md-4">
+      <div class="card hover-effect bg-dark text-white border-0 position-relative overflow-hidden h-100">
+        <a href="/{{ singleMovies[0].slug_movie | e }}" class="text-decoration-none d-block position-relative overflow-hidden">
+          <img src="{{ singleMovies[0].banner_url | e }}"
+            class="card-img-top img-fluid hover-effect"
+            style="height: 300px; object-fit: cover;" alt="{{ singleMovies[0].name_vn | e }}">
+          <span class="badge bg-danger position-absolute top-0 start-0 rounded-0 px-2 py-1 small">
+            {{ singleMovies[0].quality | default('Full | Vietsub | FHD') }}
+          </span>
+          <div class="card-img-overlay d-flex align-items-end p-2"
+            style="background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);">
+            <h5 class="card-title fw-bold mb-0 text-white">{{ singleMovies[0].name_vn | e }}</h5>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <!-- 6 phim nhỏ bên phải -->
+    <div class="col-12 col-md-8">
+      <div class="row g-3">
+        {% for i in 1..6 %}
+        {% set mv = singleMovies[i] %}
+        <div class="col-4">
+          <div class="card hover-effect bg-dark text-white border-0 position-relative overflow-visible h-100">
+            <a href="/{{ mv.slug_movie | e }}" class="text-decoration-none d-block">
+              <img src="{{ mv.banner_url | e }}"
+                class="card-img-top img-fluid"
+                style="height: 145px; object-fit: cover;" alt="{{ mv.name_vn | e }}">
+              <span class="badge bg-danger position-absolute top-0 start-0 rounded-0 px-2 py-1 small">
+                {{ mv.quality | default('Full | Vietsub | Full HD') }}
+              </span>
+              <div class="card-img-overlay d-flex align-items-end p-1"
+                style="background: linear-gradient(to top, rgba(0,0,0,0.5), transparent);">
+                <h6 class="card-title fw-bold mb-0 small text-white">{{ mv.name_vn | e }}</h6>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        {% endfor %}
+      </div>
+    </div>
+    <!-- Dòng phim bổ sung: 5 phim -->
+    <div class="row g-3 mt-2">
+      {% for i in 7..11 %}
+      {% if singleMovies[i] is defined %}
+      {% set mv = singleMovies[i] %}
+      <div class="col-6 col-md-2">
+        <div class="card hover-effect bg-dark text-white border-0 position-relative overflow-visible h-100">
+          <a href="/{{ mv.slug_movie | e }}" class="text-decoration-none d-block">
+            <img src="/img/banner/{{ mv.banner_url | e }}"
+              class="card-img-top img-fluid"
+              style="height: 145px; object-fit: cover;" alt="{{ mv.name_vn | e }}">
+            <span class="badge bg-danger position-absolute top-0 start-0 rounded-0 px-2 py-1 small">
+              {{ mv.quality | default('Full | Vietsub | Full HD') }}
+            </span>
+            <div class="card-img-overlay d-flex align-items-end p-1"
+              style="background: linear-gradient(to top, rgba(0,0,0,0.5), transparent);">
+              <h6 class="card-title fw-bold mb-0 small text-white">{{ mv.name_vn | e }}</h6>
+            </div>
+          </a>
+        </div>
+      </div>
+      {% endif %}
+      {% endfor %}
+    </div>
+
+  </div>
+  {% else %}
+  <p class="text-white">Cần ít nhất 7 phim để hiển thị phần này.</p>
+  {% endif %}
+</div>

@@ -1,0 +1,108 @@
+<!-- srcipt.php  -->
+<script src="/vendors/videojs/video.min.js"></script>
+<script src="/vendors/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/vendors/swiper/swiper-bundle.min.js"></script>
+<script src="/js/main.js"></script>
+
+<script>
+        const hotMovieSwiper = new Swiper('.hotMovieSwiper', {
+        slidesPerView: 5,
+        spaceBetween: 10,
+
+        loop: true,
+        autoplay: {
+            delay: 3000,
+            disableOnInteraction: false,
+        },
+        breakpoints: {
+            320: {
+                slidesPerView: 2,
+                spaceBetween: 10
+            },
+            640: {
+                slidesPerView: 3,
+                spaceBetween: 10
+            },
+            1024: {
+                slidesPerView: 5,
+                spaceBetween: 10
+            },
+        },
+    });
+    const bannerSwiper = new Swiper(".bannerSwiper", {
+        loop: true,
+        autoplay: {
+            delay: 5000,
+            disableOnInteraction: false
+        },
+        effect: "fade",
+        speed: 800,
+        autoHeight: true,
+    });
+    document.querySelectorAll('.banner-img').forEach(img => {
+        img.addEventListener('load', () => {
+            bannerSwiper.updateAutoHeight();
+        });
+    });
+    const popularSwiper = new Swiper(".popularSwiper", {
+        loop: true,
+        spaceBetween: 10,
+        slidesPerView: 6,
+        freeMode: true,
+        watchSlidesProgress: true,
+        breakpoints: {
+            0: { slidesPerView: 3 },
+            576: { slidesPerView: 4 },
+            768: { slidesPerView: 5 },
+            992: { slidesPerView: 6 }
+        }
+    });
+
+    // Liên kết 2 Swiper lại
+    bannerSwiper.controller.control = popularSwiper;
+    popularSwiper.controller.control = bannerSwiper;
+
+
+    
+        const swiper = new Swiper('.movieSwiper', {
+            slidesPerView: 5,
+            spaceBetween: 10,
+            navigation: {
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev',
+            },
+            loop: true,
+            autoplay: {
+                delay: 3000,
+                disableOnInteraction: false,
+            },
+            breakpoints: {
+                320: {
+                    slidesPerView: 2,
+                    spaceBetween: 10
+                },
+                640: {
+                    slidesPerView: 3,
+                    spaceBetween: 10
+                },
+                1024: {
+                    slidesPerView: 5,
+                    spaceBetween: 10
+                },
+            },
+        });
+        const swiper2 = new Swiper(".mySwiper", {
+            spaceBetween: 30,
+            effect: "fade",
+            pagination: {
+                el: ".swiper-pagination",
+                clickable: true,
+            },
+            navigation: {
+                nextEl: ".swiper-button-next",
+                prevEl: ".swiper-button-prev",
+            },
+            loop: true,
+        });
+    
+</script>

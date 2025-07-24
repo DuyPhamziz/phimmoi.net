@@ -1,0 +1,10 @@
+{% extends "layouts/base.twig" %}
+{% block title %}Đăng nhập với Google{% endblock %}
+{% block content %}
+<div class="container py-5 text-center">
+    <h2>Đăng nhập bằng Google</h2>
+    <a class="btn btn-danger mt-3" href="{{ authUrl }}">
+        <i class="fa-brands fa-google"></i> Đăng nhập với Google
+    </a>
+</div>
+{% endblock %}

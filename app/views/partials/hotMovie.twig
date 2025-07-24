@@ -1,0 +1,33 @@
+<!-- hotMovie.php  -->
+<div class="container px-2 mx-auto">
+    <div class="container">
+        <div class="titleCategory">
+            <h2>Phim hot</h2>
+        </div>
+        <div class="swiper container hotMovieSwiper">
+            <div class="swiper-wrapper">
+                {% if hotMovies is not empty %}
+                {% for hot_mv  in hotMovies %}
+                <div class="swiper-slide">
+                    <div class="position-relative">
+                        <a href="/{{ hot_mv.slug_movie | e }}" class="text-decoration-none">
+                            <img src="{{ hot_mv.poster_url | e }}"
+                                class="img-fluid rounded shadow hvr-grow" alt="Ảnh">
+
+                            <div class="position-absolute bottom-0 start-0 w-100 px-2 py-1 bg-dark bg-opacity-50 text-white text-center">
+                                <h5 class="mb-1 fw-bold">{{ hot_mv.name_vn | e }}</h5>
+                                <p class="mb-0 small">{{ hot_mv.name_eng | e }}</p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                {% endfor %}
+                {% else %}
+                <p>Không có phim để hiển thị.</p>
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+</div>

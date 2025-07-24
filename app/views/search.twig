@@ -1,0 +1,33 @@
+{% extends 'layouts/base.twig' %}
+
+{% block title %}Kết quả tìm kiếm{% endblock %}
+
+{% block content %}
+<div class="container mt-5 text-white">
+  <h2>Kết quả cho: <span class="text-warning">{{ keyword }}</span></h2>
+
+  {% if movies %}
+  <div class="row row-cols-2 row-cols-md-4 g-3 mt-3">
+    {% for movie in movies %}
+      <div class="col">
+        <a href="/{{ movie.slug_movie }}" class="text-decoration-none text-light">
+          <a href="/{{ movie.slug_movie | e }}" class="text-decoration-none position-relative d-block">
+    <img src="{{ movie.poster_url | e }}"
+         class="img-fluid rounded shadow hvr-grow"
+         alt="{{ movie.name_vn | e }}">
+
+    <div class="position-absolute bottom-0 start-0 w-100 px-2 py-1 bg-dark bg-opacity-50 text-white text-center">
+        <h6 class="mb-1 fw-bold">{{ movie.name_vn | e }}</h6>
+        <p class="mb-0 small">{{ movie.name_eng | e }}</p>
+    </div>
+</a>
+
+        </a>
+      </div>
+    {% endfor %}
+  </div>
+  {% else %}
+    <p>Không tìm thấy phim nào.</p>
+  {% endif %}
+</div>
+{% endblock %}

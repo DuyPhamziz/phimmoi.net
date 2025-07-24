@@ -1,0 +1,29 @@
+{% extends 'admin/layouts/basead.twig' %}
+
+{% block title %}
+{{ page_title }}
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+    <h2>{{ page_title }}</h2>
+    <form method="POST" action="{{ base_url }}/admin/movies/tag/{{ movie.id }}">
+        <div class="row">
+            {% for tag in tags %}
+            <div class="col-md-3">
+                <div class="form-check">
+                    <input type="checkbox" name="tags[]" value="{{ tag.id }}" {% if tag.id in currentTags %}checked{% endif %}>
+                    <label class="form-check-label">{{ tag.name_tag|e }}</label>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+    
+        <button type="submit" class="btn btn-primary mt-2">Lưu nhãn</button>
+    </form>
+</div>
+
+
+{% endblock %}

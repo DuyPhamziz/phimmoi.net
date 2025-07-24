@@ -1,0 +1,53 @@
+{% extends 'admin/layouts/basead.twig' %}
+
+{% block title %}Trang quản trị{% endblock %}
+
+{% block content %}
+<div class="container py-4 px-3 px-lg-5">
+    <h1 class="mb-4">🎬 Bảng điều khiển</h1>
+
+  
+    <div class="mt-5">
+        <h4 class="mb-3"><i class="fas fa-clock me-2"></i>Hoạt động gần đây</h4>
+        <div class="table-responsive">
+            <table class="table table-dark table-borderless table-hover rounded overflow-hidden">
+                <thead class="table-light text-dark">
+                    <tr>
+                        <th>⏱ Thời gian</th>
+                        <th>⚙️ Hành động</th>
+                        <th>📋 Chi tiết</th>
+                    </tr>
+                </thead>
+                <tbody class="align-middle">
+                    <tr>
+                        <td>30 phút trước</td>
+                        <td><span class="badge bg-success">+ Thêm phim</span></td>
+                        <td>Đã thêm phim <strong>Quật Mộ Trùng Ma</strong></td>
+                    </tr>
+                    <tr>
+                        <td>1 giờ trước</td>
+                        <td><span class="badge bg-warning text-dark">✏️ Cập nhật</span></td>
+                        <td>Cập nhật thể loại <strong>Kinh dị</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Hôm qua</td>
+                        <td><span class="badge bg-danger">🗑️ Xóa</span></td>
+                        <td>Xóa người dùng <strong>minh123</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card-hover {
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .card-hover:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    }
+</style>
+{% endblock %}

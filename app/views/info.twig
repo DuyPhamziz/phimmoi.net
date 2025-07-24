@@ -1,0 +1,108 @@
+{% extends 'layouts/base.twig' %}
+{% block title %} Chi tiết phim {% endblock %}
+
+{% block content %}
+<main id="info">
+    <!-- Phần thumbnail -->
+    <div class="thumbnail-wrapper" style="background-image: url('{{ movie.thum_url | e }}');">
+
+    </div>
+
+        <div class="poster-col container-fluid px-5 bg-transparent text-white p-4 rounded shadow-lg">
+            <div class="row">
+                <!-- Cột poster -->
+                <div class="col-md-3 d-flex flex-column align-items-center">
+                    <img src="{{ movie.poster_url | e }}"
+                        class="img-fluid" style="width: 240px; border-radius: 10px; margin-top: -25vh" />
+                    <button class="btn btn-warning fw-bold px-4 my-3">Xem Ngay</button>
+                    <div class="d-flex flex-wrap justify-content-center gap-2">
+                        {% for cat in category %}
+                       
+                            <span class="border px-2 border-warning border-2 rounded"> {{ cat.name_cat}}</span>
+                       
+                        {% endfor %}
+                    </div>
+                    <div class="container">
+                        <table class="table-movie-detail table table-borderless text-white mt-3 table-transparent w-100">
+                            <tr>
+                                <th>Thời lượng:</th>
+                                <td> {{ movie.duration | e }} phút</td>
+                            </tr>
+                            <tr>
+                                <th>Đạo diễn:</th>
+                                <td> {{ movie.director | e }}</td>
+                            </tr>
+                            <tr>
+                                <th>Năm:</th>
+                                <td>{{ movie.year | e }}</td>
+                            </tr>
+                            <tr>
+                                <th>Chất lượng:</th>
+                                <td>{{ movie.quality | e }}</td>
+                            </tr>
+                            <tr>
+                                <th>Ngôn ngữ:</th>
+                                <td>{{ movie.lang | e }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+            <!-- Nội dung -->
+            <div class="content-col col-md-9">
+                <h3 class="fw-bold">{{ movie.name_vn | e }}</h3>
+                <p class="fst-italic text-warning">{{ movie.name_eng | e }}</p>
+                <p class="fw-light">{{ movie.description | e }}</p>
+
+                <!-- Tabs -->
+                <nav>
+                    <div class="nav nav-tabs text-white" id="nav-tab" role="tablist">
+                        <button class="nav-link active" id="nav-eps-tab" data-bs-toggle="tab" data-bs-target="#nav-eps"
+                            type="button" role="tab">Tập phim</button>
+                        <button class="nav-link" id="nav-actor-tab" data-bs-toggle="tab" data-bs-target="#nav-actor"
+                            type="button" role="tab">Diễn viên</button>
+                        <button class="nav-link" id="nav-hint-tab" data-bs-toggle="tab" data-bs-target="#nav-hint"
+                            type="button" role="tab">Đề xuất</button>
+                    </div>
+                </nav>
+                <div class="tab-content mt-3" id="nav-tabContent">
+                    <div class="tab-pane fade show active" id="nav-eps" role="tabpanel">
+                        {% for ep in episodes %}
+                        <a href="/{{ movie.slug_movie | e }}/{{ ep.episode_number | e}}"
+                            class="btn btn-episode text-decoration-none">
+                            {{ ep.episode_number | e}}
+                        </a>
+                        {% endfor %}
+                    </div>
+                    <div class="tab-pane fade" id="nav-actor" role="tabpanel">{{ movie.actors | e }}</div>
+                    <div class="tab-pane fade" id="nav-hint" role="tabpanel">
+                        {% if rcmMovies is not empty %}
+                        <div class="row row-cols-2 row-cols-md-5 g-3">
+                            {% for rcmMovie in rcmMovies %}
+                            <div class="col">
+                                <a href="/{{ rcmMovie.slug_movie | e }}" class="text-decoration-none text-white">
+                                    <div class="card bg-dark border-0 shadow-sm h-100">
+                                        <img src="{{ rcmMovie.poster_url | e }}" class="card-img-top rounded mx-auto d-block" alt="Poster phim"
+                                            style="max-width: 100%; width: 100px; height: auto;">
+                                        <div class="card-body p-2 text-center">
+                                            <h6 class="card-title text-white mb-1 small text-truncate">{{ rcmMovie.name_vn | e }}
+                                            </h6>
+                                            <p class="text-white small mb-0 text-truncate">{{ rcmMovie.name_eng | e }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <p class="text-muted">Không có phim đề xuất.</p>
+                        {% endif %}
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}

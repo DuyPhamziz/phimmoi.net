@@ -1,0 +1,129 @@
+{% extends 'admin/layouts/basead.twig' %}
+
+{% block title %}
+{{ page_title }}
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-3">{{ page_title }}</h2>
+
+    <form id="createMovieForm" method="POST" action="{{ base_url }}/admin/movies/store" enctype="multipart/form-data" novalidate>
+        <ul class="nav nav-tabs flex-wrap" id="movieTabs" role="tablist">
+            <li class="nav-item"><button type="button" class="nav-link active" data-bs-toggle="tab" data-bs-target="#step1">1. Thông
+                    tin</button></li>
+            <li class="nav-item"><button type="button" class="nav-link" data-bs-toggle="tab" data-bs-target="#step2">2. Hình
+                    ảnh</button></li>
+            <li class="nav-item"><button type="button" class="nav-link" data-bs-toggle="tab" data-bs-target="#step3">3. Thể loại &
+                    QG</button></li>
+            <li class="nav-item"><button type="button" class="nav-link" data-bs-toggle="tab" data-bs-target="#step4">4. Tập
+                    phim</button></li>
+        </ul>
+
+        <div class="tab-content p-3 border border-top-0">
+            <!-- Step 1 -->
+            <div class="tab-pane fade show active" id="step1">
+                <div class="row g-3">
+                    <div class="col-md-6"><label class="form-label">Tên phim (VN)</label><input type="text"
+                            class="form-control" name="name_vn" id="name_vn" required></div>
+                    <div class="col-md-6"><label class="form-label">Tên phim (EN)</label><input type="text"
+                            class="form-control" name="name_eng" required></div>
+                    <div class="col-md-12"><label class="form-label">Slug</label>
+                        <div class="d-flex gap-2">
+                            <input type="text" class="form-control" name="slug_movie" id="slug_movie" required>
+                            <button type="button" class="btn btn-outline-secondary"
+                                onclick="slug_movie.value = toSlug(name_vn.value)">Tạo slug</button>
+                        </div>
+                    </div>
+                    <div class="col-md-4"><label class="form-label">Thời lượng</label><input type="text"
+                            class="form-control" name="duration" required></div>
+                    <div class="col-md-4"><label class="form-label">Đạo diễn</label><input type="text"
+                            class="form-control" name="director" required></div>
+                    <div class="col-md-4"><label class="form-label">Diễn viên</label><input type="text"
+                            class="form-control" name="actors" required></div>
+                    <div class="col-md-4"><label class="form-label">Năm</label><input type="number" class="form-control"
+                            name="year" required></div>
+                    <div class="col-md-4"><label class="form-label">Chất lượng</label><input type="text"
+                            class="form-control" name="quality" required></div>
+                    <div class="col-md-4"><label class="form-label">Ngôn ngữ</label><input type="text"
+                            class="form-control" name="lang" required></div>
+                    <div class="col-md-6"><label class="form-label">Loại</label><input type="text" class="form-control"
+                            name="type" required></div>
+                    <div class="col-md-12"><label class="form-label">Mô tả</label><textarea class="form-control"
+                            name="description" rows="4" required></textarea></div>
+                    <div class="col-12 d-flex justify-content-end">
+                        <button type="button" class="btn btn-primary" onclick="nextTab('step2')">Tiếp theo</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="tab-pane fade" id="step2">
+                <div class="row g-3">
+                    <div class="col-md-4"><label class="form-label">Poster</label><input type="file"
+                            class="form-control" name="poster_url" required></div>
+                    <div class="col-md-4"><label class="form-label">Thumbnail</label><input type="file"
+                            class="form-control" name="thum_url" required></div>
+                    <div class="col-md-4"><label class="form-label">Banner</label><input type="file"
+                            class="form-control" name="banner_url" required></div>
+                    <div class="col-12 d-flex justify-content-between">
+                        <button type="button" class="btn btn-secondary" onclick="nextTab('step1')">Quay lại</button>
+                        <button type="button" class="btn btn-primary" onclick="nextTab('step3')">Tiếp theo</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="tab-pane fade" id="step3">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Thể loại</label>
+                        <select name="categories[]" id="categories" class="form-select" multiple required>
+                            {% for category in categories %}
+                            <option value="{{ category.id }}">{{ category.name_cat }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Quốc gia</label>
+                        <select name="countries[]" id="countries" class="form-select" multiple required>
+                            {% for country in countries %}
+                            <option value="{{ country.id }}">{{ country.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <label class="form-label">Trạng thái</label>
+                    <select name="episodes[0][status_id]" class="form-select mt-1" required>
+                        {% for sta in status %}
+                        <option value="{{ sta.id }}" {% if sta.name=='Trailer' %}selected{% endif %}>
+                            {{ sta.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    <div class="col-12 d-flex justify-content-between">
+                        <button type="button" class="btn btn-secondary" onclick="nextTab('step2')">Quay lại</button>
+                        <button type="button" class="btn btn-primary" onclick="nextTab('step4')">Tiếp theo</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 4 -->
+            <div class="tab-pane fade" id="step4">
+                <div id="episode-list" data-episode-count="1">
+                    <div class="episode-item mb-3">
+                        <input type="text" name="episodes[0][title]" placeholder="Tên tập" class="form-control mb-1"
+                            required>
+                        <input type="text" name="episodes[0][url]" placeholder="Link video" class="form-control"
+                            required>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-outline-primary mt-2" onclick="addEpisode()">+ Thêm tập</button>
+                <div class="d-flex justify-content-between mt-3">
+                    <button type="button" class="btn btn-secondary" onclick="nextTab('step3')">Quay lại</button>
+                    <button type="submit" class="btn btn-success">Lưu phim</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

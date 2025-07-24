@@ -1,0 +1,24 @@
+{% extends 'layouts/base.twig' %}
+
+{% block content %}
+
+<div class="error-page">
+    <div class="floating-icon left">
+        <i class="fas fa-film"></i>
+    </div>
+    <div class="floating-icon right">
+        <i class="fas fa-video"></i>
+    </div>
+
+    <div class="error-content">
+        <h1 class="display-1 fw-bold text-danger">404</h1>
+        <h3 class="mb-3">Trang không tồn tại</h3>
+        <p class="text-secondary mb-4">
+            {{ message|default('Có vẻ như bạn đang tìm một bộ phim chưa được chiếu...') }}
+        </p>
+        <a href="{{ base_url }}/" class="btn btn-lg btn-primary shadow">
+            <i class="fas fa-arrow-left me-1"></i> Quay về trang chủ
+        </a>
+    </div>
+</div>
+{% endblock %}

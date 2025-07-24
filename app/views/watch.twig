@@ -1,0 +1,300 @@
+{% extends 'layouts/base.twig' %}
+
+{% block title %}Xem Phim{% endblock %}
+
+{% block content %}
+<main id="watch">
+
+    <nav class="container" style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="#">Home</a></li>
+            <li class="breadcrumb-item text-white active" aria-current="page">Library</li>
+        </ol>
+    </nav>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8">
+                <div style="width: 720px; height: 400px; max-width: 100%;">
+                    <video data-progress="{{ progress }}" data-episode-id="{{ currentEp.id }}" id="player-hls"
+                        class="video-js vjs-default-skin" controls
+                        style="width: 100%; height: 100%; object-fit: contain;" data-setup='{}'>
+                        <source src="{{ currentEp.link_m3u8 | e }}" type="application/x-mpegURL" />
+                    </video>
+                </div>
+
+                <div class="title-movie">
+                    <div class="d-flex">
+                        <h3>{{ movie.name_vn | e }}</h3>
+                        <span class="badge bg-info text-dark custom-small text-white">{{ movie.year | e }}</span>
+                    </div>
+                    <div class="d-flex">
+                        <p class="fst-italic text-white">{{ movie.name_eng | e }}</p>
+                        <div class="d-flex gap-2">
+                            {% for cat in category %}
+                            <span class="badge bg-warning text-dark custom-small text-white">{{ cat.name_cat | e
+                                }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-white pb-3">
+                    <div class="fs-3 px-3 rounded-2" style="background-color:#132538;">Các tập phim</div>
+                    <div class="bg-dark px-3">
+                        {% for epForMovie in epForMovie %}
+                        <a href="/{{ movie.slug_movie | e }}/{{ epForMovie.episode_number | e }}"
+                            class="btn btn-episode text-decoration-none">
+                            {{ epForMovie.episode_number | e }}
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="text-white pb-3">
+                    <div class="fs-3 px-3 rounded-2" style="background-color:#132538;">Bình luận</div>
+                    <div class="bg-dark px-3 pt-3 pb-2 rounded-bottom">
+
+                        {% if session.user is defined %}
+                        <form method="POST" action="/comment" class="mb-4" id="comment-form">
+                            <input type="hidden" name="movie_id" value="{{ movie_id }}">
+                            <input type="hidden" name="slug" value="{{ slug }}">
+                            <input type="hidden" name="ep" value="{{ ep }}">
+
+                            <div class="mb-3">
+                                <textarea name="content" class="form-control" rows="3" required
+                                    placeholder="Nhập bình luận..."></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Gửi bình luận</button>
+                        </form>
+                        {% else %}
+                        <p class="text-white">
+                            <a href="/login" class="text-warning">Đăng nhập</a> để bình luận.
+                        </p>
+                        {% endif %}
+
+                        <div id="commentList" class="mt-4">
+                            {% import _self as macros %}
+                            {% if comments is not empty %}
+                            {% set max_comments = 10 %}
+                            {% for i, comment in comments %}
+                            {% set is_hidden = i >= max_comments %}
+                            <div class="comment-level-1 {% if is_hidden %}hidden{% endif %}">
+                                {{ macros.render_comment(comment, movie.id, movie.slug_movie, currentEp.episode_number)
+                                }}
+                            </div>
+                            {% endfor %}
+
+                            {% if comments|length > max_comments %}
+                            <div class="text-center mt-3">
+                                <button class="btn btn-sm btn-outline-light toggle-more-comments">
+                                    Xem thêm {{ comments|length - max_comments }} bình luận
+                                </button>
+                            </div>
+                            {% endif %}
+                            {% else %}
+                            <div class="text-muted fst-italic text-center">Chưa có bình luận nào.</div>
+                            {% endif %}
+                        </div>
+
+                        {% macro render_comment(comment, movie_id, slug, ep) %}
+                        <div
+                            class="d-flex bg-dark text-white p-3 rounded shadow-sm {% if comment.parent_id %}ms-4{% endif %}">
+                            <img src="{{ comment.avatar }}" alt="avatar" width="40" height="40"
+                                class="rounded-circle border me-3">
+                            <div class="flex-grow-1">
+                                <div class="d-flex justify-content-between align-items-center mb-1 flex-wrap">
+                                    <strong class="text-warning">{{ comment.name }} <i
+                                            class="{{ comment.icon }}"></i></strong>
+                                    <small class="text-white">{{ comment.created_at | date('d/m/Y H:i') }}</small>
+                                </div>
+                                <p class="mb-0 text-light" style="white-space: pre-line;">{{ comment.content }}</p>
+
+                                {% if session.user is defined and comment.level < 2 %} <button
+                                    class="btn btn-sm btn-link text-light p-0 mt-1"
+                                    onclick="document.getElementById('reply-form-{{ comment.id }}').style.display='block'">
+                                    Trả lời</button>
+                                    <form method="POST" action="/comment" class="mt-2" style="display:none;"
+                                        id="reply-form-{{ comment.id }}">
+                                        <input type="hidden" name="movie_id" value="{{ movie_id }}">
+                                        <input type="hidden" name="slug" value="{{ slug }}">
+                                        <input type="hidden" name="ep" value="{{ ep }}">
+                                        <input type="hidden" name="parent_id" value="{{ comment.id }}">
+                                        <textarea name="content" class="form-control form-control-sm mb-2" rows="2"
+                                            required></textarea>
+                                        <div class="d-flex gap-2">
+                                            <button type="submit" class="btn btn-sm btn-success">Gửi</button>
+                                            <button type="button" class="btn btn-sm btn-secondary"
+                                                onclick="document.getElementById('reply-form-{{ comment.id }}').style.display='none'">Hủy</button>
+                                        </div>
+                                    </form>
+                                    {% endif %}
+
+                                    {% if comment.replies is defined and comment.replies|length > 0 %}
+                                    {% set max_replies = 2 %}
+                                    {% for j, reply in comment.replies %}
+                                    {% set is_reply_hidden = j >= max_replies %}
+                                    <div
+                                        class="reply-of-{{ comment.id }} {% if is_reply_hidden %}hidden{% endif %} ms-4 mt-2">
+                                        {{ _self.render_comment(reply, movie_id, slug, ep) }}
+                                    </div>
+                                    {% endfor %}
+                                    {% if comment.replies|length > max_replies %}
+                                    <button class="btn btn-sm btn-link text-warning mt-1 toggle-more-replies"
+                                        data-parent-id="{{ comment.id }}">
+                                        Xem thêm phản hồi ({{ comment.replies|length - max_replies }})
+                                    </button>
+                                    {% endif %}
+                                    {% endif %}
+                            </div>
+                        </div>
+                        {% endmacro %}
+
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="col-md-4 d-none d-md-block bg-dark text-white px-3 py-4 rounded shadow">
+                <h4 class="mb-4 border-bottom pb-2 text-warning">Phim đề xuất</h4>
+
+                {% if rcmMovies is not empty %}
+                <div class="d-flex flex-column gap-3">
+                    {% for rcmMovie in rcmMovies %}
+                    <a href="/{{ rcmMovie.slug_movie | e }}" class="text-decoration-none text-white">
+                        <div
+                            class="d-flex align-items-center bg-secondary bg-opacity-10 rounded hover-shadow p-2 transition-all">
+                            <img src="{{ rcmMovie.poster_url | e }}" alt="Ảnh" class="rounded me-3"
+                                style="width: 70px; height: 100px; object-fit: cover;">
+                            <div class="flex-grow-1">
+                                <h6 class="mb-1 fw-bold text-warning">{{ rcmMovie.name_vn | e }}</h6>
+                                <p class="mb-0 small fst-italic text-light">{{ rcmMovie.name_eng | e }}</p>
+                            </div>
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="text-muted fst-italic">Không có phim để hiển thị.</p>
+                {% endif %}
+            </div>
+
+        </div>
+    </div>
+    <!-- Resume Modal -->
+    <div class="modal fade" id="resumeModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-dark text-white">
+                <div class="modal-header">
+                    <h5 class="modal-title">Tiếp tục xem?</h5>
+                </div>
+                <div class="modal-body">
+                    Bạn đã xem đến <strong id="resumeTime"></strong>. Bạn có muốn tiếp tục từ đó?
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" id="restartBtn">Xem từ đầu</button>
+                    <button class="btn btn-primary" id="resumeBtn">Tiếp tục</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</main>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const player = videojs('player-hls');
+        const movieID = '{{ movie.id }}';
+        const episodeID = '{{ currentEp.id }}';
+        const askedResumeKey = `askedResume_${movieID}_${episodeID}`;
+        const savedProgress = parseInt('{{ save_progress|default(0) }}', 10);
+
+        const shouldAskToResume = !sessionStorage.getItem(askedResumeKey) && savedProgress > 0;
+
+        if (shouldAskToResume) {
+            document.getElementById('resumeTime').textContent = savedProgress + ' giây';
+            const resumeModal = new bootstrap.Modal(document.getElementById("resumeModal"));
+            resumeModal.show();
+
+            document.getElementById("resumeBtn").addEventListener("click", function () {
+                player.ready(() => {
+                    player.currentTime(savedProgress);
+                    player.play();
+                });
+                sessionStorage.setItem(askedResumeKey, "true");
+                resumeModal.hide();
+            });
+
+            document.getElementById("restartBtn").addEventListener("click", function () {
+                player.ready(() => {
+                    player.currentTime(0);
+                    player.play();
+                });
+                sessionStorage.setItem(askedResumeKey, "true");
+                resumeModal.hide();
+            });
+        }
+
+        // Reset khi đổi tập
+        document.querySelectorAll('.btn-episode').forEach(btn => {
+            btn.addEventListener('click', function () {
+                sessionStorage.removeItem(askedResumeKey);
+            });
+        });
+
+        // Reset nếu rời trang
+        window.addEventListener('beforeunload', function () {
+            sessionStorage.removeItem(askedResumeKey);
+        });
+
+        // Khi video bắt đầu chạy
+        player.on("play", function () {
+            console.log("Video started playing");
+        });
+        let lastProgress = 0;
+        // Theo dõi thời gian xem
+        player.on("timeupdate", function () {
+            const progress = Math.floor(player.currentTime());
+
+            if (progress - lastProgress >= 5) {
+                lastProgress = progress;
+                console.log("Progress:", progress);
+
+                fetch('/history/save-progress', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: "include",
+                    body: JSON.stringify({
+                        movie_id: movieID,
+                        episode_id: episodeID,
+                        progress_seconds: progress
+                    })
+                }).then(res => {
+                    if (!res.ok) {
+                        console.error("Lỗi khi gửi progress");
+                    }
+                }).catch(err => {
+                    console.error("Fetch error:", err);
+                });
+            }
+        });
+        // Hiển thị thêm bình luận cấp 1
+        document.querySelector(".toggle-more-comments")?.addEventListener("click", function () {
+            document.querySelectorAll(".comment-level-1.hidden").forEach(el => el.classList.remove("hidden"));
+            this.style.display = "none";
+        });
+
+        // Hiển thị thêm phản hồi theo từng bình luận cha
+        document.querySelectorAll(".toggle-more-replies").forEach(button => {
+            button.addEventListener("click", function () {
+                const parentId = this.dataset.parentId;
+                document.querySelectorAll(`.reply-of-${parentId}.hidden`).forEach(el => el.classList.remove("hidden"));
+                this.style.display = "none";
+            });
+        });
+    });
+</script>
+
+{% endblock %}

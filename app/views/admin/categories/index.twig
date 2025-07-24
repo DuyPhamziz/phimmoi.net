@@ -1,0 +1,131 @@
+{% extends 'admin/layouts/basead.twig' %}
+
+{% block title %}Danh sách thể loại phim{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="mb-0" >Thể loại phim</h2>
+        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createCategoryModal">
+            <i class="fas fa-plus"></i> Thêm thể loại
+        </button>
+    </div>
+    <div class="modal fade" id="createCategoryModal" tabindex="-1"
+        aria-labelledby="createCategoryModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <form method="POST" action="{{ base_url }}/admin/categories/create" class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createCategoryModalLabel">Thêm thể loại phim</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                </div>
+                <div class="modal-body row g-3">
+                    
+                    <p class="mb-0"><i>Chỉ cần nhập Tên thể loại - Slug là tự động</i></p>
+                    <div class="col-md-12">
+                        <label class="form-label">Tên thể loại</label>
+                        <input type="text" id="name_cat" name="name_cat" class="form-control" required>
+                    </div>
+                    <div class="col-md-12">
+                        <label class="form-label">Slug thể loại</label>
+                        <input type="text" id="slug_cat" name="slug_cat" class="form-control" required>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Thêm
+                    </button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    {% if categories is not empty %}
+    <table class="table table-striped table-bordered align-middle shadow-sm">
+        <thead class="table-dark">
+            <tr>
+                <th>#</th>
+                <th>Tên thể loại</th>
+                <th>Slug thể loại</th>
+                <th>Số phim</th>
+                <th class="text-center">Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for category in categories %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ category.name_cat|e }}</td>
+                <td>{{ category.slug_cat|e }}</td>
+                <td class="text-center">{{ category.movie_count|e }}</td>
+                <td class="text-center">
+                    <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal{{ category.id }}">
+                        <i class="fas fa-edit"></i> Sửa
+                    </button>
+                    <div class="modal fade" id="editModal{{ category.id }}" tabindex="-1" aria-labelledby="editModalLabel{{ category.id }}">
+                        <div class="modal-dialog modal-lg">
+                            <form method="POST" action="{{ base_url }}/admin/categories/update/{{ category.id }}" class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="editModalLabel{{ category.id }}">Sửa thể loại: {{ category.name_cat }}</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                                </div>
+                                <div class="modal-body row g-3">
+                                    <input type="hidden" name="id" value="{{ category.id }}">
+                    
+                                    <div class="col-md-12">
+                                        <label class="form-label">Tên thể loại</label>
+                                        <input type="text" id="name_cat_edit_{{ category.id }}" value="{{ category.name_cat|e }}" name="name_cat" class="form-control" required>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label class="form-label">Slug thể loại</label>
+                                        <input type="text" id="slug_cat_edit_{{ category.id }}" value="{{ category.slug_cat|e }}" name="slug_cat" class="form-control" required>
+                                    </div>
+                    
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save"></i> Lưu thay đổi
+                                    </button>
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <form method="POST" action="{{ base_url }}/admin/categories/delete/{{ category.id }}"
+                        class="d-inline delete-category-form">
+                        <button type="button" class="btn btn-danger btn-sm"
+                           data-category-name="{{ category.name_cat }}">
+                            <i class="fas fa-trash-alt"></i> Xóa
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="alert alert-info">Chưa có thể loại nào.</div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+
+    // Modal khởi tạo lại focus
+        const modals = document.querySelectorAll('.modal');
+        modals.forEach(modal => {
+            // Khi modal đóng hoàn toàn thì focus lại button mở nó
+            modal.addEventListener('hidden.bs.modal', () => {
+                const toggleBtn = document.querySelector(`[data-bs-target="#${modal.id}"]`);
+                if (toggleBtn) toggleBtn.focus();
+            });
+
+            // Khi modal *bắt đầu* đóng, chuyển focus ra khỏi modal ngay lập tức
+            modal.addEventListener('hide.bs.modal', () => {
+                document.activeElement?.blur();
+            });
+        });
+</script>
+{% endblock %}
+
