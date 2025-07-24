@@ -23,5 +23,4 @@ RUN sed -ri -e 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-avail
 # # Cài các thư viện PHP từ composer
 # RUN composer install --no-interaction --optimize-autoloader
 
-# Chmod quyền cho .env nếu cần
-RUN chmod 644 /var/www/html/.env
+
