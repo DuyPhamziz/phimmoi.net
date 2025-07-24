@@ -1,7 +1,9 @@
 FROM php:8.2-apache
 
 # Cài các extension cần thiết (thêm nếu bạn cần)
-RUN docker-php-ext-install pdo pdo_mysql pdo_pgsql
+RUN apt-get update && apt-get install -y libpq-dev \
+    && docker-php-ext-install pdo_mysql pdo_pgsql
+
 
 # Bật mod_rewrite cho Apache (quan trọng cho MVC)
 RUN a2enmod rewrite
