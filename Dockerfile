@@ -1,13 +1,25 @@
 FROM php:8.2-apache
 
-# Enable Apache mod_rewrite
+# Cài các extension cần thiết (thêm nếu bạn cần)
+RUN docker-php-ext-install pdo pdo_mysql pdo_pgsql
+
+# Bật mod_rewrite cho Apache (quan trọng cho MVC)
 RUN a2enmod rewrite
 
-# Copy source code to container
+# Copy code vào container
 COPY . /var/www/html/
 
-# Set working directory
-WORKDIR /var/www/html/
+# Chỉ định thư mục public là document root
+ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
 
-# Set file permissions
-RUN chown -R www-data:www-data /var/www/html
+# Sửa lại Apache config để dùng public/ làm root
+RUN sed -ri -e 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/000-default.conf
+
+# Cài composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Cài các thư viện PHP từ composer
+RUN composer install --no-interaction --optimize-autoloader
+
+# Chmod quyền cho .env nếu cần
+RUN chmod 644 /var/www/html/.env

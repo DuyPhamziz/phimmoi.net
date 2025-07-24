@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: php-mvc-app
+    env: docker
+    plan: free
+    autoDeploy: true
+    envVars:
+      - key: DB_HOST
+        fromDatabase:
+          name: your-db-name
+          property: host
+      - key: DB_NAME
+        value: movie_hp
+      - key: DB_USER
+        value: postgres
+      - key: DB_PASS
+        value: hp12345
+      - key: DB_PORT
+        value: 5432
