@@ -24,9 +24,9 @@ use App\Models\Country;
 use App\Models\Tag;
 use App\Core\Twig;
 
-Twig::getEnvironment()->addGlobal('categories', (new Category())->getAll());
-Twig::getEnvironment()->addGlobal('tags', (new Tag())->getAll());
-Twig::getEnvironment()->addGlobal('countries', (new Country())->getAll());
+// Twig::getEnvironment()->addGlobal('categories', (new Category())->getAll());
+// Twig::getEnvironment()->addGlobal('tags', (new Tag())->getAll());
+// Twig::getEnvironment()->addGlobal('countries', (new Country())->getAll());
 
 
 
