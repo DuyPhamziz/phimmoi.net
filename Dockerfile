@@ -18,10 +18,10 @@ ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
 RUN sed -ri -e 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/000-default.conf
 
 # Cài composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+# COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Cài các thư viện PHP từ composer
-RUN composer install --no-interaction --optimize-autoloader
+# # Cài các thư viện PHP từ composer
+# RUN composer install --no-interaction --optimize-autoloader
 
 # Chmod quyền cho .env nếu cần
 RUN chmod 644 /var/www/html/.env
