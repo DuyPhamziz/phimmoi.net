@@ -10,7 +10,7 @@ class Helpers
     public static function render($view, $data = [])
     {
         // Khởi tạo loader cho Twig
-        $loader = new FilesystemLoader(__DIR__ . '/../views');
+        $loader = new FilesystemLoader(__DIR__ . '/../Views');
         $twig = new Environment($loader, [
             'debug' => true,
             'cache' => false,
