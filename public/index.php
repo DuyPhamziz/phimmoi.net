@@ -24,9 +24,9 @@ use App\Models\Country;
 use App\Models\Tag;
 use App\Core\Twig;
 
-// Twig::getEnvironment()->addGlobal('categories', (new Category())->getAll());
-// Twig::getEnvironment()->addGlobal('tags', (new Tag())->getAll());
-// Twig::getEnvironment()->addGlobal('countries', (new Country())->getAll());
+Twig::getEnvironment()->addGlobal('categories', (new Category())->getAll());
+Twig::getEnvironment()->addGlobal('tags', (new Tag())->getAll());
+Twig::getEnvironment()->addGlobal('countries', (new Country())->getAll());
 
 
 
@@ -40,8 +40,8 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 // Load biến môi trường
-$dotenv = Dotenv::createImmutable(__DIR__ . '/../');
-$dotenv->load();
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
+$dotenv->safeLoad();  // nếu không có .env thì không ném exception
 
 // Khởi tạo router
 $router = new Router();
