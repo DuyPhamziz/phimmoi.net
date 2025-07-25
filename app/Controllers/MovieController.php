@@ -5,7 +5,7 @@ namespace App\Controllers;
 use App\Models\Tag;
 use App\Models\Movie;
 use App\Models\Comment;
-use App\core\Helpers;
+use App\Core\Helpers;
 use App\Models\History;
 use App\Core\Twig;
 use App\Controllers\BaseController;

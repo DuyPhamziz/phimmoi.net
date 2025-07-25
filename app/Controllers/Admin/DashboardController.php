@@ -2,7 +2,7 @@
 
 namespace App\controllers\Admin;
 
-use App\controllers\Admin\BaseAdminController;
+use App\Controllers\Admin\BaseAdminController;
 
 class DashboardController extends BaseAdminController
 {
