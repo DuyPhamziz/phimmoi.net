@@ -37,8 +37,8 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 // Load biến môi trường
-$dotenv = Dotenv::createImmutable(__DIR__ . '/../');
-$dotenv->load();
+// $dotenv = Dotenv::createImmutable(__DIR__ . '/../');
+// $dotenv->load();
 
 // Khởi tạo router
 $router = new Router();
