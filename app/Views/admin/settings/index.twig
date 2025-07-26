@@ -1,0 +1,48 @@
+{% extends 'admin/layouts/basead.twig' %}
+
+{% block title %}Quản lý người dùng{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h2 class="mb-3">Quản lý người dùng</h2>
+
+    <table class="table table-sm table-striped table-bordered">
+        <thead class="table-light">
+            <tr>
+                <th>ID</th>
+                <th>Tên</th>
+                <th>Email</th>
+                <th>Vai trò</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.id }}</td>
+                <td>{{ user.name }}</td>
+                <td>{{ user.email }}</td>
+                <td>
+                    <span class="badge bg-{{ user.role == 'admin' ? 'success' : 'secondary' }}">
+                        {{ user.role|capitalize }}
+                    </span>
+                </td>
+                <td>
+                    {% if user.role != 'admin' %}
+                    <a href="/admin/settings/setadmin/{{ user.id }}" class="btn btn-sm btn-outline-success"
+                        onclick="return confirm('Bạn có chắc muốn cấp quyền admin cho {{ user.name }}?');">
+                        Cấp quyền
+                    </a>
+                    {% else %}
+                    <a href="/admin/settings/revokeadmin/{{ user.id }}" class="btn btn-sm btn-outline-danger"
+                        onclick="return confirm('Bạn có chắc muốn thu hồi quyền admin của {{ user.name }}?');">
+                        Thu hồi
+                    </a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,79 @@
+<style>
+    .scroll-movie-wrapper {
+        overflow-x: auto;
+        white-space: nowrap;
+        padding-bottom: 8px;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .scroll-movie-item {
+        display: inline-block;
+        width: 160px;
+        background-color: #1e1e1e;
+        border-radius: 6px;
+        margin-right: 12px;
+        scroll-snap-align: start;
+        transition: transform 0.3s ease;
+        text-decoration: none;
+    }
+
+    .scroll-movie-item:hover {
+        transform: translateY(-2px) scale(1.02);
+    }
+
+    .scroll-movie-thumb {
+        width: 100%;
+        height: 90px;
+        object-fit: cover;
+        border-radius: 6px 6px 0 0;
+    }
+
+    .scroll-movie-info {
+        padding: 6px 8px;
+    }
+
+    .scroll-movie-title {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #fff;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin-bottom: 4px;
+    }
+
+    .scroll-movie-quality {
+        font-size: 0.75rem;
+        color: #aaa;
+    }
+
+    /* Scrollbar ẩn (tùy chọn) */
+    .scroll-movie-wrapper::-webkit-scrollbar {
+        display: none;
+    }
+</style>
+
+<div class="container px-2 my-4">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+        <h5 class="text-white fw-bold">Nhiều người xem</h5>
+        <a href="/loc/nhieu-nguoi-xem" class="btn btn-sm btn-outline-light">Xem tất cả</a>
+    </div>
+
+    {% if viewALotMovie|length >= 1 %}
+    <div class="scroll-movie-wrapper">
+        {% for mv in viewALotMovie|slice(0, 12) %}
+        <a href="/{{ mv.slug_movie | e }}" class="scroll-movie-item">
+            <img src="{{ mv.poster_url | default(mv.banner_url) | e }}" class="scroll-movie-thumb"
+                alt="{{ mv.name_vn | e }}">
+            <div class="scroll-movie-info">
+                <div class="scroll-movie-title">{{ mv.name_vn | e }}</div>
+                <div class="scroll-movie-quality">{{ mv.quality | default('HD Vietsub') }}</div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="text-white">Không có phim để hiển thị.</p>
+    {% endif %}
+</div>

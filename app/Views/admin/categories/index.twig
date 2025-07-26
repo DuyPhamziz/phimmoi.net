@@ -2,8 +2,10 @@
 
 {% block title %}Danh sách thể loại phim{% endblock %}
 
+
 {% block content %}
 <div class="container mt-4">
+
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h2 class="mb-0" >Thể loại phim</h2>
         <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createCategoryModal">
@@ -40,7 +42,7 @@
             </form>
         </div>
     </div>
-    {% if categories is not empty %}
+    {% if categoriesPag is not empty %}
     <table class="table table-striped table-bordered align-middle shadow-sm">
         <thead class="table-dark">
             <tr>
@@ -52,7 +54,7 @@
             </tr>
         </thead>
         <tbody>
-            {% for category in categories %}
+            {% for category in categoriesPag %}
             <tr>
                 <td>{{ loop.index }}</td>
                 <td>{{ category.name_cat|e }}</td>
@@ -103,6 +105,11 @@
             {% endfor %}
         </tbody>
     </table>
+    {% include 'layouts/pagination.twig' with {
+  totalPages: totalPages,
+  currentPage: currentPage,
+  baseUrl: baseUrl
+} %}
     {% else %}
     <div class="alert alert-info">Chưa có thể loại nào.</div>
     {% endif %}
@@ -127,5 +134,7 @@
             });
         });
 </script>
+
+
 {% endblock %}
 

@@ -21,6 +21,7 @@
 					<th class="d-none d-md-table-cell">Năm</th>
 					<th class="d-none d-md-table-cell">Poster</th>
 					<th class="d-none d-md-table-cell">Thể loại</th>
+					<th class="d-none d-md-table-cell">Quốc gia</th>
 					<th class="d-none d-md-table-cell">Nhãn</th>
 					<th class="d-none d-md-table-cell">Hành động</th>
 				</tr>
@@ -55,6 +56,11 @@
 					<td>
 						{% for cat in movie.categories|split(', ') %}
 						<span class="badge bg-secondary me-1"><i class="fa-solid fa-tag"></i> {{ cat }}</span>
+						{% endfor %}
+					</td>
+					<td>
+						{% for ct in movie.countries|split(', ') %}
+						<span class="badge bg-success me-1"><i class="fa-solid fa-tag"></i> {{ ct }}</span>
 						{% endfor %}
 					</td>
 					<td>
@@ -113,6 +119,11 @@
 				{% endfor %}
 			</tbody>
 		</table>
+		{% include 'layouts/pagination.twig' with {
+  totalPages: totalPages,
+  currentPage: currentPage,
+  baseUrl: baseUrl
+} %}
 	</div>
 </div>
 {% endblock %}

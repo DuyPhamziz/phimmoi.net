@@ -6,20 +6,23 @@
             <div class="swiper-wrapper">
                 {% for popular in popularMovies %}
                 <div class="swiper-slide banner-slide position-relative">
-                    <img src="{{ popular.banner_url | e }}" class="banner-img img-fluid w-100 object-fit-cover"
-                        style="height: 80vh; object-position: center;" alt="Banner">
+                    <div class="ratio ratio-16x9 ratio-lg-21x9 overflow-hidden">
+                        <img src="{{ popular.banner_url | e }}" class="banner-img w-100 h-100 object-fit-cover"
+                            style="object-position: center;" alt="{{ popular.name_vn | e }}">
+                    </div>
 
                     <!-- Gradient che banner -->
                     <div class="position-absolute top-0 start-0 w-100 h-100"
                         style="background: linear-gradient(to right, rgba(0,0,0,0.85) 25%, rgba(0,0,0,0.1) 75%); z-index:1;">
                     </div>
 
-                    <!-- Nội dung chữ trên banner -->
-                    <div class="position-absolute top-50 start-0 translate-middle-y px-4 px-md-5"
-                        style="z-index:2; max-width: 60%;">
-                        <h1 class="fw-bold display-5 mb-2">{{ popular.name_vn | e }}</h1>
-                        <p class="fs-5 d-none d-md-block">{{ popular.name_eng | e }}</p>
-                        <a href="/movie/info/slug/{{ popular.slug_movie | e }}"
+                    <!-- Nội dung chữ -->
+                    <div class="position-absolute top-50 start-0 translate-middle-y px-3 px-md-5"
+                        style="z-index:2; max-width: 90%; width: 100%;">
+                        <h2 class="fw-bold mb-2 text-break" style="font-size: clamp(1.5rem, 5vw, 3rem);">{{
+                            popular.name_vn | e }}</h2>
+                        <p class="fs-6 fs-md-5 d-none d-sm-block">{{ popular.name_eng | e }}</p>
+                        <a href="{{ popular.slug_movie | e }}"
                             class="btn btn-light text-dark fw-semibold mt-3">
                             <i class="bi bi-play-fill"></i> Xem ngay
                         </a>
@@ -30,16 +33,19 @@
         </div>
 
         <!-- Danh sách phim phổ biến nhỏ -->
-        <div class="popular-overlap position-absolute end-0 bottom-0 me-3 mb-3 bg-dark bg-opacity-25 p-3 rounded shadow-lg d-none d-md-block"
-            style="width: 300px; z-index: 3;">
+        <div class="popular-overlap position-absolute end-0 bottom-0 me-2 me-md-3 mb-2 mb-md-3 bg-dark bg-opacity-50 p-3 rounded shadow-lg"
+            style="width: 100%; max-width: 320px; z-index: 3;">
             <div class="swiper popularSwiper">
                 <div class="swiper-wrapper">
                     {% for popular in popularMovies %}
-                    <div class="swiper-slide text-center">
-                        <a href="/movie/info/slug/{{ popular.slug_movie | e }}">
+                    <div class="swiper-slide text-center" style="width: 100px;">
+                        <a href="{{ popular.slug_movie | e }}">
                             <img src="{{ popular.poster_url | e }}" class="img-fluid rounded poster-small mb-1"
-                                alt="{{ popular.name_vn | e }}">
-                            <small class="text-white d-block text-truncate">{{ popular.name_vn | e }}</small>
+                                alt="{{ popular.name_vn | e }}"
+                                style="aspect-ratio: 2/3; object-fit: cover; height: 100px;">
+                            <small class="text-white d-block text-truncate" title="{{ popular.name_vn | e }}">
+                                {{ popular.name_vn | e }}
+                            </small>
                         </a>
                     </div>
                     {% endfor %}

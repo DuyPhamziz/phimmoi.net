@@ -23,25 +23,42 @@ class EpisodeController extends BaseAdminController {
         $this->EpisodeModel = new Episode();
         $this->TagModel = new Tag();
     }
-    public function index()
-    {
-        $episodes = $this->EpisodeModel->getAllWithMovieName();
+    public function index($page = 1)
+{
+    $perPage = 5; // mỗi trang bao nhiêu phim (và kèm theo các tập tương ứng)
+    $currentPage = (int)$page;
+    $offset = ($currentPage - 1) * $perPage;
 
-        
-        $groupedEpisodes = [];
+    // Lấy danh sách phim có tập phim (distinct)
+    $moviesWithEpisodes = $this->EpisodeModel->getDistinctMoviesWithEpisodes();
+    $totalMovies = count($moviesWithEpisodes);
+    $totalPages = ceil($totalMovies / $perPage);
 
-        foreach ($episodes as $ep) {
-            $movieName = $ep['movie_name']; 
-            if (!isset($groupedEpisodes[$movieName])) {
-                $groupedEpisodes[$movieName] = [];
-            }
-            $groupedEpisodes[$movieName][] = $ep;
+    // Chỉ lấy phim trong trang hiện tại
+    $pagedMovies = array_slice($moviesWithEpisodes, $offset, $perPage);
+
+    // Lấy các tập phim tương ứng với các phim đó
+    $movieIds = array_column($pagedMovies, 'movie_id');
+    $episodes = $this->EpisodeModel->getEpisodesByMovieIds($movieIds);
+
+    // Gom lại thành groupedEpisodes như cũ
+    $groupedEpisodes = [];
+    foreach ($episodes as $ep) {
+        $movieName = $ep['movie_name'];
+        if (!isset($groupedEpisodes[$movieName])) {
+            $groupedEpisodes[$movieName] = [];
         }
-
-        $this->render('admin/episodes/index', [
-            'groupedEpisodes' => $groupedEpisodes
-        ]);
+        $groupedEpisodes[$movieName][] = $ep;
     }
+
+    $this->render('admin/episodes/index', [
+        'groupedEpisodes' => $groupedEpisodes,
+        'currentPage' => $currentPage,
+        'totalPages' => $totalPages,
+        'baseUrl' => '/admin/episodes'
+    ]);
+}
+
     public function create() {
         if($_SERVER['REQUEST_METHOD'] === 'POST') {
             $movie_id = $_POST['movie_id'] ?? null;

@@ -21,6 +21,7 @@ class MovieController extends BaseController
     protected $commentModel;
     public function __construct()
     {
+        parent::__construct();
         $this->movieModel = new Movie();
         $this->commentModel = new Comment();
         $this->TagModel = new Tag();
@@ -31,9 +32,12 @@ class MovieController extends BaseController
     {
 
         $hotMovies = $this->movieModel->getMoviesByTag('phim-hot', 10);
-        $popularMovies = $this->movieModel->getMoviesByTag('popular', 10);
-
-        $singleMovies = $this->movieModel->getMoviesByTag('phim-le', 10);
+        $popularMovies = $this->movieModel->getMoviesByTag('pho-bien', 10);
+        $singleMovies = $this->movieModel->getMoviesByTag('phim-le', 13);
+        $theatresMovie = $this->movieModel->getMoviesByTag('phim-bo', 15);
+        $animeMovies = $this->movieModel->getMoviesByTag('hoat-hinh', 12);
+        $summerMovie = $this->movieModel->getMoviesByTag('mua-he', 14);
+        $viewALotMovie = $this->movieModel->getMoviesByTag('nhieu-nguoi-xem', 14);
 
 
 
@@ -41,6 +45,10 @@ class MovieController extends BaseController
             'hotMovies' => $hotMovies,
             'popularMovies' => $popularMovies,
             'singleMovies' => $singleMovies,
+            'theatresMovie' => $theatresMovie,
+            'animeMovies' => $animeMovies,
+            'summerMovie' => $summerMovie,
+            'viewALotMovie' => $viewALotMovie,
         ], $this->getSharedData()));
     }
 
@@ -216,30 +224,25 @@ class MovieController extends BaseController
     }
 
 
-    public function filter($slug)
- {
-        $categorySlug = $_GET['category'] ?? null;
-        $countrySlug = $_GET['country'] ?? null;
-
-    if ($categorySlug || $countrySlug) {
-        $movies = $this->movieModel->filterMovies($categorySlug, $countrySlug);
-
-        Helpers::render('filter', array_merge([
-            'movies' => $movies,
-            'page_title' => 'Kết quả lọc phim',
-            'slug' => null,
-        ], $this->getSharedData()));
-        return;
-    }
-
+    public function filter($slug, $page = 1)
+    {
         // 1. Thử tìm theo tag
         $tag = $this->TagModel->findBySlug($slug);
         if ($tag) {
             $movies = $this->movieModel->getByTagId($tag['id']);
+            $currentPage = (int)$page;
+            $perPage = 12;
+            $totalMovies = count($movies);
+            $totalPages = ceil($totalMovies / $perPage);
+            $movies = array_slice($movies, ($currentPage - 1) * $perPage, $perPage);
+
             Helpers::render('filter', array_merge([
                 'movies' => $movies,
                 'page_title' => ' ' . $tag['name_tag'],
                 'slug' => $slug,
+                'currentPage' => $currentPage,
+                'totalPages' => $totalPages,
+                'baseUrl' => '/loc/' . $slug
             ], $this->getSharedData()));
             return;
         }
@@ -248,10 +251,19 @@ class MovieController extends BaseController
         $country = $this->CountryModel->findBySlug($slug);
         if ($country) {
             $movies = $this->movieModel->getByCountryId($country['id']);
+            $currentPage = (int)($page ?? 1);
+            $perPage = 12;
+            $totalMovies = count($movies);
+            $totalPages = ceil($totalMovies / $perPage);
+            $movies = array_slice($movies, ($currentPage - 1) * $perPage, $perPage);
+
             Helpers::render('filter', array_merge([
                 'movies' => $movies,
                 'page_title' => 'Quốc gia: ' . $country['name'],
                 'slug' => $slug,
+                'currentPage' => $currentPage,
+                'totalPages' => $totalPages,
+                'baseUrl' => '/loc/' . $slug
             ], $this->getSharedData()));
             return;
         }
@@ -260,10 +272,19 @@ class MovieController extends BaseController
         $category = $this->CategoryModel->findBySlug($slug);
         if ($category) {
             $movies = $this->movieModel->getByCategoryId($category['id']);
+            $currentPage = (int)($page ?? 1);
+            $perPage = 12;
+            $totalMovies = count($movies);
+            $totalPages = ceil($totalMovies / $perPage);
+            $movies = array_slice($movies, ($currentPage - 1) * $perPage, $perPage);
+
             Helpers::render('filter', array_merge([
                 'movies' => $movies,
                 'page_title' => 'Thể loại: ' . $category['name_cat'],
                 'slug' => $slug,
+                'currentPage' => $currentPage,
+                'totalPages' => $totalPages,
+                'baseUrl' => '/loc/' . $slug
             ], $this->getSharedData()));
             return;
         }
@@ -271,15 +292,39 @@ class MovieController extends BaseController
         // 4. Không tìm thấy gì
         Helpers::render404('Không tìm thấy nội dung phù hợp!');
     }
-    protected function getSharedData()
+    public function filterForm()
     {
-        $countryModel = new \App\Models\Country();
-        $categoryModel = new \App\Models\Category();
+        $categorySlug = $_GET['category'] ?? null;
+        $countrySlug = $_GET['country'] ?? null;
+        $page = isset($_GET['page']) && is_numeric($_GET['page']) ? (int)$_GET['page'] : 1;
+        $perPage = 12;
+        $offset = ($page - 1) * $perPage;
 
-        return [
-            'countries' => $countryModel->getAll(),
-            'categories' => $categoryModel->getAll()
-        ];
-        
+        // Lấy tất cả phim thỏa điều kiện
+        $allMovies = $this->movieModel->filterMovies($categorySlug, $countrySlug);
+
+        // Tính tổng và phân trang
+        $totalMovies = count($allMovies);
+        $totalPages = ceil($totalMovies / $perPage);
+        $movies = array_slice($allMovies, $offset, $perPage);
+
+        // Tạo base URL giữ nguyên filter
+        $queryParams = [];
+        if ($categorySlug) $queryParams['category'] = $categorySlug;
+        if ($countrySlug) $queryParams['country'] = $countrySlug;
+        $baseUrl = '/loc';
+        if (!empty($queryParams)) {
+            $baseUrl .= '?' . http_build_query($queryParams);
+        }
+
+        Helpers::render('filter', array_merge([
+            'movies' => $movies,
+            'page_title' => 'Kết quả lọc phim',
+            'selectedCategory' => $categorySlug,
+            'selectedCountry' => $countrySlug,
+            'currentPage' => $page,
+            'totalPages' => $totalPages,
+            'baseUrl' => $baseUrl
+        ], $this->getSharedData()));
     }
 }

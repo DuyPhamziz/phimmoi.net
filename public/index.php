@@ -1,97 +1,143 @@
 <?php
 
-// Load autoload
-require_once __DIR__ . '/../vendor/autoload.php';
 
+require_once __DIR__ . '/../vendor/autoload.php';
 use Dotenv\Dotenv;
+
+$dotenv = Dotenv::createImmutable(__DIR__ . '/../');
+$dotenv->load();
+
+
 use Bramus\Router\Router;
-use App\Core\Twig;
 use App\Controllers\AuthController;
 use App\Controllers\MovieController;
 use App\Controllers\HistoryController;
 use App\Controllers\CommentController;
-use App\Controllers\Admin\DashboardController;
+use App\Controllers\Admin\BaseAdminController;
+use App\Controllers\Admin\SettingController;
 
-// Load environment variables
-$envPath = dirname(__DIR__);
-$dotenv = Dotenv::createImmutable($envPath);
-$dotenv->safeLoad();
+use App\Models\Category;
+use App\Models\Country;
+use App\Models\Tag;
+use App\Core\Twig;
 
-// Start session if none
+Twig::getEnvironment()->addGlobal('categories', (new Category())->getAll());
+Twig::getEnvironment()->addGlobal('tags', (new Tag())->getAll());
+Twig::getEnvironment()->addGlobal('countries', (new Country())->getAll());
+
+
+
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Initialize Twig and global vars
-$twig = Twig::getEnvironment();
-$twig->addGlobal('categories', (new \App\Models\Category())->getAll());
-$twig->addGlobal('tags', (new \App\Models\Tag())->getAll());
-$twig->addGlobal('countries', (new \App\Models\Country())->getAll());
+// Load biến môi trường
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
-// Initialize router
+// Load biến môi trường
+$dotenv = Dotenv::createImmutable(__DIR__ . '/../');
+$dotenv->load();
+
+// Khởi tạo router
 $router = new Router();
 
-// === AUTH ===
-$router->get('/login', 'App\Controllers\AuthController@login');
-$router->get('/logout', 'App\Controllers\AuthController@logout');
-$router->get('/auth/callback', 'App\Controllers\AuthController@callback');
+// ==== AUTH ====
+$router->get('/login', fn() => (new AuthController)->login());
 
-// === ADMIN MIDDLEWARE ===
-$router->before('GET', '/admin.*', function() {
-    if (empty($_SESSION['user']) || ($_SESSION['user']['role'] ?? '') !== 'admin') {
+$router->get('/logout', fn() => (new AuthController)->logout());
+$router->get('/auth/callback', fn() => (new AuthController)->callback());
+
+// ==== ADMIN ====
+// ==== Middleware bảo vệ admin ====
+$router->before('GET', '/admin.*', function () {
+    if (!isset($_SESSION['user'])) {
         header('Location: /login');
+        exit;
+    }
+
+    if (($_SESSION['user']['role'] ?? '') !== 'admin') {
+        header('Location: /');
         exit;
     }
 });
 
-// === ADMIN ROUTES ===
-$router->get('/admin', 'App\Controllers\Admin\DashboardController@index');
+// ==== Route ADMIN ====
+$router->get('/admin', fn() => (new \App\Controllers\Admin\DashboardController)->index());
+$router->get('/admin/movies', 'App\controllers\Admin\MovieController@index');
+$router->get('/admin/movies/page/{page}', 'App\controllers\Admin\MovieController@index');
+$router->get('/admin/movies/show/{id}', 'App\controllers\Admin\MovieController@show');
+$router->get('/admin/movies/create', 'App\controllers\Admin\MovieController@create');
+$router->post('/admin/movies/store', 'App\controllers\Admin\MovieController@store');
+$router->get('/admin/movies/edit/{id}', 'App\controllers\Admin\MovieController@edit');
+$router->post('/admin/movies/update/{id}', 'App\controllers\Admin\MovieController@update');
 
-// Movie admin
-$router->get('/admin/movies', 'App\Controllers\Admin\MovieController@index');
-$router->get('/admin/movies/show/{id}', 'App\Controllers\Admin\MovieController@show');
-$router->get('/admin/movies/create', 'App\Controllers\Admin\MovieController@create');
-$router->post('/admin/movies/store', 'App\Controllers\Admin\MovieController@store');
-$router->get('/admin/movies/edit/{id}', 'App\Controllers\Admin\MovieController@edit');
-$router->post('/admin/movies/update/{id}', 'App\Controllers\Admin\MovieController@update');
-$router->post('/admin/movies/delete/{id}', 'App\Controllers\Admin\MovieController@delete');
-$router->get('/admin/movies/tag/{id}', 'App\Controllers\Admin\MovieController@tag');
-$router->post('/admin/movies/tag/{id}', 'App\Controllers\Admin\MovieController@updateTag');
+$router->post('/admin/movies/delete/{id}', 'App\controllers\Admin\MovieController@delete');
+$router->get('/admin/movies/tag/{id}', 'App\controllers\Admin\MovieController@tag');
+$router->post('/admin/movies/tag/{id}', 'App\controllers\Admin\MovieController@updateTag');
 
-// Episode admin
-$router->get('/admin/episodes', 'App\Controllers\Admin\EpisodeController@index');
-$router->post('/admin/episodes/create', 'App\Controllers\Admin\EpisodeController@create');
-$router->post('/admin/episodes/update/{id}', 'App\Controllers\Admin\EpisodeController@update');
-$router->post('/admin/episodes/delete/{id}', 'App\Controllers\Admin\EpisodeController@delete');
+$router->get('/admin/episodes', 'App\controllers\Admin\EpisodeController@index');
+$router->get('/admin/episodes/page/{page}', 'App\controllers\Admin\EpisodeController@index');
+$router->post('/admin/episodes/create', 'App\controllers\Admin\EpisodeController@create');
+$router->post('/admin/episodes/update/{id}', 'App\controllers\Admin\EpisodeController@update');
+$router->post('/admin/episodes/delete/{id}', 'App\controllers\Admin\EpisodeController@delete');
 
-// Category admin
-$router->get('/admin/categories', 'App\Controllers\Admin\CategoryController@index');
-$router->post('/admin/categories/create', 'App\Controllers\Admin\CategoryController@create');
-$router->post('/admin/categories/update/{id}', 'App\Controllers\Admin\CategoryController@update');
-$router->post('/admin/categories/delete/{id}', 'App\Controllers\Admin\CategoryController@delete');
+$router->get('/admin/categories', 'App\controllers\Admin\CategoryController@index');
+$router->get('/admin/categories/page/{page}', 'App\controllers\Admin\CategoryController@index');
+$router->post('/admin/categories/create', 'App\controllers\Admin\CategoryController@create');
+$router->post('/admin/categories/update/{id}', 'App\controllers\Admin\CategoryController@update');
+$router->post('/admin/categories/delete/{id}', 'App\controllers\Admin\CategoryController@delete');
 
-// Country admin
-$router->get('/admin/countries', 'App\Controllers\Admin\CountryController@index');
-$router->post('/admin/countries/create', 'App\Controllers\Admin\CountryController@create');
-$router->post('/admin/countries/update/{id}', 'App\Controllers\Admin\CountryController@update');
-$router->post('/admin/countries/delete/{id}', 'App\Controllers\Admin\CountryController@delete');
+$router->get('/admin/countries', 'App\controllers\Admin\CountryController@index');
+$router->get('/admin/countries/page/{page}', 'App\controllers\Admin\CountryController@index');
+$router->post('/admin/countries/create', 'App\controllers\Admin\CountryController@create');
+$router->post('/admin/countries/update/{id}', 'App\controllers\Admin\CountryController@update');
+$router->post('/admin/countries/delete/{id}', 'App\controllers\Admin\CountryController@delete');
 
-// Tag admin
-$router->get('/admin/tags', 'App\Controllers\Admin\TagController@index');
-$router->post('/admin/tags/create', 'App\Controllers\Admin\TagController@create');
-$router->post('/admin/tags/update/{id}', 'App\Controllers\Admin\TagController@update');
-$router->post('/admin/tags/delete/{id}', 'App\Controllers\Admin\TagController@delete');
 
-// === USER ROUTES ===
-$router->get('/', 'App\Controllers\MovieController@home');
-$router->get('/search', 'App\Controllers\MovieController@search');
-$router->get('/search/([^/]+)', 'App\Controllers\MovieController@searchSlug');
-$router->get('/history', 'App\Controllers\HistoryController@index');
+$router->get('/admin/tags', 'App\controllers\Admin\TagController@index');
+$router->get('/admin/tags/page/{page}', 'App\controllers\Admin\TagController@index');
+$router->post('/admin/tags/create', 'App\controllers\Admin\TagController@create');
+$router->post('/admin/tags/update/{id}', 'App\controllers\Admin\TagController@update');
+$router->post('/admin/tags/delete/{id}', 'App\controllers\Admin\TagController@delete');
+
+$router->get('/admin/settings', 'App\controllers\Admin\SettingController@index');
+$router->get('/admin/settings/setadmin/{id }', 'App\controllers\Admin\SettingController@setAdmin');
+$router->get('/admin/settings/revokeadmin/{id}', 'App\controllers\Admin\SettingController@revokeAdmin');
+
+
+
+
+// ==== ROUTES NGƯỜI DÙNG ====
+$router->get('/', fn() => (new MovieController)->home());
+$router->get('/search', fn() => (new MovieController)->search());
+$router->get('/search/([^/]+)', fn($slug) => (new MovieController)->searchSlug($slug));
+
+$router->get('/history', 'App\controllers\HistoryController@index');
+
+// ROUTE CHO THỂ LOẠI VÀ QUỐC GIA 
+
 $router->get('/loc/([^/]+)', 'App\Controllers\MovieController@filter');
-$router->post('/history/save-progress', 'App\Controllers\HistoryController@saveProgress');
-$router->post('/comment', 'App\Controllers\MovieController@handleCommentPost');
-$router->get('/{slug}/{ep}', 'App\Controllers\MovieController@watch');
-$router->get('/{slug}', 'App\Controllers\MovieController@info');
+$router->get('/loc/([^/]+)/page/{page}', 'App\Controllers\MovieController@filter');
+// Route GET /loc/{slug}
+$router->get('/loc', 'App\Controllers\MovieController@filterForm');
 
-// Run router
+
+
+// $router->get('/tag/([^/]+)', 'App\Controllers\MovieController@filter');
+// $router->get('/categories/([^/]+)', 'App\Controllers\MovieController@filter');
+
+// ROUTE ĐỘNG PHẢI ĐỂ SAU CÙNG
+$router->get('/{slug}/{ep}', fn($slug, $ep) => (new MovieController)->watch($slug, $ep));
+$router->post('/history/save-progress', fn() => (new HistoryController)->saveProgress());
+
+
+// Route xử lý gửi bình luận
+
+$router->post('/comment', 'App\controllers\MovieController@handleCommentPost');
+$router->get('/{slug}', fn($slug) => (new MovieController)->info($slug));
+
+
+// ==== RUN ROUTER ====
 $router->run();

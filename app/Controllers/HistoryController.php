@@ -22,6 +22,7 @@ class HistoryController extends BaseController
     protected $commentModel;
     public function __construct()
     {
+        parent::__construct();
         $this->historyModel = new History();
         $this->movieModel = new Movie();
         $this->commentModel = new Comment();

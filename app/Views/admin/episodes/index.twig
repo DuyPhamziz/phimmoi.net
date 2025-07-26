@@ -153,6 +153,12 @@
                 {% endif %}
             </tbody>
         </table>
+        {% include 'layouts/pagination.twig' with {
+    totalPages: totalPages,
+    currentPage: currentPage,
+    baseUrl: baseUrl
+} %}
+
     </div>
 </div>
 {% endblock %}

@@ -9,12 +9,12 @@
 <!-- 📂 Nút mở/đóng bộ lọc -->
 <div class="ms-3 mb-3">
   <button class="btn btn-outline-light" type="button" data-bs-toggle="collapse" data-bs-target="#filterBox">
-    📂 Bộ lọc
+    <i class="fa-solid fa-filter"></i> Bộ lọc
   </button>
 </div>
 
 <!-- 🧩 Bảng lọc xổ ra đẩy phim xuống -->
-<form id="filterBox" class="collapse ms-3 mb-4" method="get" action="/loc">
+<form id="filterBox" class="collapse ms-3 mb-4">
   <!-- THỂ LOẠI -->
   <div class="mb-3">
     <strong class="text-white d-block mb-2">Thể loại:</strong>
@@ -49,8 +49,6 @@
 
 
 
-
-
 <div class="ms-3 row">
   {% for movie in movies %}
   <div class="col-md-2 mb-4">
@@ -66,13 +64,18 @@
         </div>
       </a>
     </div>
-</div>
+  </div>
 
 
 
-{% else %}
-<p>Không có phim nào.</p>
-{% endfor %}
+  {% else %}
+  <p>Không có phim nào.</p>
+  {% endfor %}
+  {% include 'layouts/pagination.twig' with {
+  totalPages: totalPages,
+  currentPage: currentPage,
+  baseUrl: baseUrl
+} %}
 </div>
 
 {% endblock %}

@@ -14,7 +14,10 @@
                 <div class="col-md-3 d-flex flex-column align-items-center">
                     <img src="{{ movie.poster_url | e }}"
                         class="img-fluid" style="width: 240px; border-radius: 10px; margin-top: -25vh" />
-                    <button class="btn btn-warning fw-bold px-4 my-3">Xem Ngay</button>
+                    <a href="/{{ movie.slug_movie | e }}/{{ 1 }}" class="btn btn-warning fw-bold px-4 my-3">
+                        <i class="bi bi-play-fill"></i> Xem Ngay
+                        </a>
+
                     <div class="d-flex flex-wrap justify-content-center gap-2">
                         {% for cat in category %}
                        

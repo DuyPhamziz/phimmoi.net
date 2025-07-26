@@ -5,12 +5,13 @@ namespace App\Controllers;
 use App\Models\Comment;
 use App\Core\Helpers;
 
-class CommentController
+class CommentController extends BaseController
 {
     protected $commentModel;
 
     public function __construct()
     {
+        parent::__construct();
         $this->commentModel = new Comment();
     }
 

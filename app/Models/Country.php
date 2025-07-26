@@ -90,6 +90,29 @@ class Country {
     $stmt->execute(['slug' => $slug]);
     return $stmt->fetch(PDO::FETCH_ASSOC);
 }
+    // Đếm tổng số quốc gia
+public function countAll()
+{
+    $stmt = $this->db->query("SELECT COUNT(*) FROM countries");
+    return $stmt->fetchColumn();
+}
+
+// Lấy danh sách có phân trang
+public function getPaginated($limit, $offset)
+{
+    $sql = "SELECT c.*, 
+                   (SELECT COUNT(*) FROM movie_countries mc WHERE mc.country_id = c.id) AS movie_count
+            FROM countries c
+            ORDER BY c.id DESC
+            LIMIT :limit OFFSET :offset";
+
+    $stmt = $this->db->prepare($sql);
+    $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+    $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+    $stmt->execute();
+
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
 
 
 }

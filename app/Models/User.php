@@ -20,7 +20,16 @@ class User {
         $user = $stmt->fetch();
         return $user ?: null;
     }
+    public function find($id)
+    {
 
+        $stmt = $this->db->prepare("SELECT * FROM users WHERE id = ?");
+        $stmt->execute([
+            $id
+        ]);
+        $user = $stmt->fetch();
+        return $user ?: null;
+    }
     public function create(array $data): ?array {
 
         $randomUser = UsernameGenerator::generate();
@@ -42,5 +51,27 @@ class User {
         ]);
          return $this->findByGoogleId($data['id']);
     }
+    public function getAll() {
+        $sql = "SELECT id, avatar, name, email, role
+                FROM users";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+    public function setAdmin($userId)
+    {
+        $sql = "UPDATE users SET role = 'admin' WHERE id = :id";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute(['id' => $userId]);
+    }
+
+    // Hủy quyền admin
+    public function revokeAdmin($userId)
+    {
+        $sql = "UPDATE users SET role = 'user' WHERE id = :id";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute(['id' => $userId]);
+    }
+
 }
 

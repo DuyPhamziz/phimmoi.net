@@ -21,7 +21,7 @@
                 <h3 class="card-title text-center text-md-start">{{ movie.name_vn }}</h3>
                 <h5 class="text-muted text-center text-md-start">{{ movie.name_eng }}</h5>
 
-                <div class="mb-2"><strong>Thời lượng:</strong> {{ movie.duration }} phút</div>
+                <div class="mb-2"><strong>Thời lượng:</strong> {{ movie.duration }}</div>
                 <div class="mb-2"><strong>Đạo diễn:</strong> {{ movie.director }}</div>
                 <div class="mb-2"><strong>Năm sản xuất:</strong> {{ movie.year }}</div>
                 <div class="mb-2"><strong>Chất lượng:</strong> {{ movie.quality }}</div>
@@ -39,11 +39,18 @@
 
                 <div class="mb-2">
                     <strong>Tags:</strong><br>
-                    {% for tag in movie.tags %}
-                    <span class="badge bg-warning text-dark me-1 mb-1"> <i class="fa-solid fa-tag"></i> {{ tag.name }}</span>
+                    {% for tag in movie.tagsforMovie %}
+                    <span class="badge bg-warning text-dark me-1 mb-1"> <i class="fa-solid fa-tag"></i> {{ tag.name_tag
+                        }}</span>
                     {% endfor %}
                 </div>
-
+                <div class="mb-2">
+                    <strong>Tags:</strong><br>
+                    {% for ct in movie.Countries %}
+                    <span class="badge bg-danger text-white me-1 mb-1"> <i class="fa-solid fa-tag"></i> {{ ct.name
+                        }}</span>
+                    {% endfor %}
+                </div>
                 <hr>
                 <h5>Mô tả:</h5>
                 <p style="white-space: pre-line;">{{ movie.description }}</p>

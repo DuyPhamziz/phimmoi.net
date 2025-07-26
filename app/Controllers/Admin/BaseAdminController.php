@@ -42,8 +42,8 @@ class BaseAdminController
             [
                 'label' => 'Cài đặt',
                 'icon' => 'gear',
-                'url' => '/admin/settings'
-            ],
+                'url' => '/admin/settings' 
+            ]
         ];
     }
     public function __construct()
@@ -67,7 +67,7 @@ class BaseAdminController
     {
         // Biến dùng chung cho layout sidebar
         $layoutData = [
-            'base_url ' => $_ENV['BASE_URL'],
+            'base_url' => $_ENV['BASE_URL'],
             'current_url' => parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH),
             'menu' => $this->getAdminMenu(),
             'user' => $_SESSION['user'] ?? null,

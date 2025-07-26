@@ -24,13 +24,26 @@ class MovieController extends BaseAdminController
         $this->EpisodeModel = new Episode();
         $this->TagModel = new Tag();
     }
-    public function index()
+    public function index($page = 1)
     {
-        $movies = $this->movieModel->getAll();
+        $perPage = 10;
+        $currentPage = max(1, (int)$page);
+        $offset = ($currentPage - 1) * $perPage;
+
+
+        $totalMovies = $this->movieModel->countAll();
+        $totalPages = ceil($totalMovies / $perPage);
+
+        $movies = $this->movieModel->getPaginated($perPage, $offset);
+
         $this->render('admin/movies/index', [
             'movies' => $movies,
+            'currentPage' => $currentPage,
+            'totalPages' => $totalPages,
+            'baseUrl' => '/admin/movies'
         ]);
     }
+
     public function show($id)
     {
         $movies = $this->movieModel->findByIdWithTagsAndCategories($id);
@@ -108,7 +121,6 @@ class MovieController extends BaseAdminController
                 $slug,
                 $data['banner_old'] ?? null
             );
-
 
             $movieData = [
                 'name_eng'    => !empty($data['name_eng']) ? $data['name_eng'] : 'Unknown',
@@ -283,6 +295,4 @@ class MovieController extends BaseAdminController
         header('Location: ' . $_ENV['BASE_URL'] . '/admin/movies');
         exit;
     }
-
-
 }

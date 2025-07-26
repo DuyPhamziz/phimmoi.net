@@ -1,0 +1,30 @@
+{% if totalPages > 1 %}
+<nav class="mt-5">
+  <ul class="pagination justify-content-center rounded-3 p-2">
+    
+    {# Nút Prev #}
+    <li class="page-item {% if currentPage == 1 %}disabled{% endif %}">
+      <a class="page-link bg-dark text-white border-secondary" href="{{ baseUrl }}/page/{{ currentPage - 1 }}">«</a>
+    </li>
+
+    {# Các trang #}
+    {% for i in 1..totalPages %}
+      <li class="page-item {% if i == currentPage %}active{% endif %}">
+        <a class="page-link 
+          {% if i == currentPage %}
+            bg-white text-dark fw-bold
+          {% else %}
+            bg-dark text-white border-secondary
+          {% endif %}"
+          href="{{ baseUrl }}/page/{{ i }}">{{ i }}</a>
+      </li>
+    {% endfor %}
+
+    {# Nút Next #}
+    <li class="page-item {% if currentPage == totalPages %}disabled{% endif %}">
+      <a class="page-link bg-dark text-white border-secondary" href="{{ baseUrl }}/page/{{ currentPage + 1 }}">»</a>
+    </li>
+    
+  </ul>
+</nav>
+{% endif %}

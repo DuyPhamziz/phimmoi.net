@@ -1,0 +1,70 @@
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
+<div class="row g-3" style="margin-top: 20px;">
+    <!-- Thể loại bên trái -->
+    <div class="row g-3 align-items-stretch">
+        <!-- Cột trái -->
+        <div class="col-12 col-md-3">
+            <div class="bg-dark text-white rounded shadow-sm h-100 p-4 d-flex flex-column justify-content-between">
+                <div>
+                    <h4 class="fw-bold mb-2" style="color: #d8b4fe;">Phim hay</h4>
+                </div>
+                <a href="/loc/phim-hay" class="text-white text-decoration-none fw-semibold d-flex align-items-center">
+                    <span>Xem toàn bộ</span>
+                    <i class="ms-2 bi bi-arrow-right"></i> <!-- Dùng Bootstrap Icons -->
+                </a>
+            </div>
+        </div>
+    
+        <!-- Cột phải -->
+        <div class="col-12 col-md-9">
+            <div class="swiper catMoviewithSwiper">
+                <div class="swiper-wrapper">
+                    {% for movie in singleMovies %}
+                    <div class="swiper-slide" style="width: 280px;"> <!-- ảnh to hơn -->
+                        <div class="card border-0 bg-transparent text-white">
+                            <a href="{{ movie.slug|e }}">
+                                <img src="{{ movie.banner_url|e }}" class="rounded" alt="{{ movie.name_vn|e }}"
+                                    style="height: 160px; width: 100%; object-fit: cover;">
+                            </a>
+                            <div class="mt-2">
+                                <div class="small bg-secondary px-2 py-1 rounded mb-1 d-inline-block"
+                                    style="font-size: 11px;">
+                                    {{ movie.current_episode }}
+                                </div>
+                                <h6 class="mb-0 fw-bold text-truncate" style="font-size: 15px;">
+                                    {{ movie.name_vn }}
+                                </h6>
+                                <small class="text-muted d-block text-truncate" style="font-size: 13px;">
+                                    {{ movie.name_eng }}
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <!-- Navigation -->
+                <div class="swiper-button-next text-white" style="right: 0;"></div>
+                <div class="swiper-button-prev text-white" style="left: 0;"></div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+<script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+<script>
+    const swiper1 = new Swiper('.catMoviewithSwiper', {
+        slidesPerView: 2,
+        spaceBetween: 15,
+        navigation: {
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev',
+        },
+        breakpoints: {
+            576: { slidesPerView: 3 },
+            768: { slidesPerView: 4 },
+            992: { slidesPerView: 5 },
+            1200: { slidesPerView: 6 }
+        }
+    });
+</script>

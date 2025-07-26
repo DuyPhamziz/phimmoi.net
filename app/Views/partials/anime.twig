@@ -1,0 +1,47 @@
+<style>
+    .movie-thumb {
+        aspect-ratio: 16 / 9;
+        object-fit: cover;
+        border-radius: 6px;
+        transition: transform 0.3s ease;
+    }
+
+    .movie-thumb:hover {
+        transform: scale(1.03);
+    }
+
+    .movie-title {
+        font-size: 0.95rem;
+        font-weight: 500;
+    }
+
+    .movie-badge {
+        font-size: 0.75rem;
+        position: absolute;
+        top: 6px;
+        left: 6px;
+    }
+</style>
+
+<div class="container my-4 px-2">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="text-white fw-bold">📺 Phim Hoạt hình</h5>
+        <a href="/loc/phim-le" class="btn btn-sm btn-outline-light">Xem tất cả</a>
+    </div>
+
+    {% if animeMovies|length >= 1 %}
+    <div class="row g-3">
+        {% for mv in animeMovies|slice(0, 12) %}
+        <div class="col-6 col-md-3">
+            <a href="/{{ mv.slug_movie | e }}" class="text-decoration-none text-white position-relative d-block">
+                <img src="{{ mv.banner_url | e }}" class="w-100 movie-thumb" alt="{{ mv.name_vn | e }}">
+                <span class="badge bg-danger movie-badge">{{ mv.quality | default('HD Vietsub') }}</span>
+                <div class="mt-1 text-truncate movie-title">{{ mv.name_vn | e }}</div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="text-white">Không có phim để hiển thị.</p>
+    {% endif %}
+</div>

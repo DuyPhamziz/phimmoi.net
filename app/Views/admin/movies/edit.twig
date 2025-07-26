@@ -124,6 +124,14 @@
                             {% endfor %}
                         </select>
                     </div>
+                    <label class="form-label">Trạng thái</label>
+                    <select name="episodes[0][status_id]" class="form-select mt-1" required>
+                        {% for sta in status %}
+                        <option value="{{ sta.id }}" {% if sta.name=='Trailer' %}selected{% endif %}>
+                            {{ sta.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
                     <div class="col-12 d-flex justify-content-between">
                         <button type="button" class="btn btn-secondary" onclick="nextTab('step2')">Quay lại</button>
                         <button type="button" class="btn btn-primary" onclick="nextTab('step4')">Tiếp theo</button>
@@ -153,14 +161,7 @@
                         <input type="text" name="episodes[{{ loop.index0 }}][url]" value="{{ episode.link_m3u8 }}"
                             placeholder="Link video" class="form-control" required>
                     </div>
-                    <label class="form-label">Trạng thái</label>
-                    <select name="status_id" class="form-select mt-1" required>
-                        {% for sta in status %}
-                        <option value="{{ sta.id }}" {% if sta.id== movie.status_id %}selected{% endif %}>
-                            {{ sta.name }}
-                        </option>
-                        {% endfor %}
-                    </select>
+                    
                     
                     {% endfor %}
                 </div>

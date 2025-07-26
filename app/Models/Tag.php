@@ -92,4 +92,26 @@ class Tag
             'id' => $id,
         ]);
     }
+    public function countAll()
+{
+    $stmt = $this->db->query("SELECT COUNT(*) FROM tags");
+    return $stmt->fetchColumn();
+}
+
+public function getPaginated($limit, $offset)
+{
+    $stmt = $this->db->prepare("
+        SELECT t.*,
+               (SELECT COUNT(*) FROM movie_tags mt WHERE mt.tag_id = t.id) AS movie_count
+        FROM tags t
+        ORDER BY t.id DESC
+        LIMIT :limit OFFSET :offset
+    ");
+    $stmt->bindValue(':limit', $limit, \PDO::PARAM_INT);
+    $stmt->bindValue(':offset', $offset, \PDO::PARAM_INT);
+    $stmt->execute();
+
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
 }

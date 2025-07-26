@@ -106,4 +106,36 @@ class Episode
         $stmt = $this->db->prepare($sql);
         return $stmt->execute(['id' => $id]);
     }
+    // Trả về các phim duy nhất có tập phim
+public function getDistinctMoviesWithEpisodes()
+{
+    $stmt = $this->db->query("
+        SELECT DISTINCT m.id AS movie_id, m.name_vn AS movie_name
+        FROM movies m
+        JOIN episodes e ON m.id = e.movie_id
+        ORDER BY m.id DESC
+    ");
+    return $stmt->fetchAll();
+}
+
+// Trả về các tập theo danh sách ID phim
+public function getEpisodesByMovieIds($movieIds)
+{
+    if (empty($movieIds)) return [];
+
+    $placeholders = implode(',', array_fill(0, count($movieIds), '?'));
+    $sql = "
+        SELECT e.*, m.name_vn AS movie_name
+        FROM episodes e
+        JOIN movies m ON e.movie_id = m.id
+        WHERE m.id IN ($placeholders)
+        ORDER BY m.id DESC, e.episode_number ASC
+    ";
+
+    $stmt = $this->db->prepare($sql);
+    $stmt->execute($movieIds);
+
+    return $stmt->fetchAll();
+}
+
 }

@@ -106,6 +106,12 @@
             {% endfor %}
         </tbody>
     </table>
+    {% include 'layouts/pagination.twig' with {
+    currentPage: currentPage,
+    totalPages: totalPages,
+    baseUrl: baseUrl
+} %}
+
     {% else %}
     <div class="alert alert-info">Chưa có quốc gia nào nào.</div>
     {% endif %}

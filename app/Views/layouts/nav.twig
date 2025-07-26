@@ -1,3 +1,4 @@
+
 <nav class="navbar navbar-expand-lg navbar-dark bg-nav fixed-top bg-transparent transition-bg shadow-sm" id="mainNav">
     <div class="container-fluid">
         <!-- Logo -->
@@ -24,8 +25,8 @@
                         href="/loc/phim-le">Phim lẻ</a></li>
                 <li class="nav-item"><a class="nav-link {% if currentRoute == 'hoat-hinh' %}active{% endif %}"
                         href="/loc/hoat-hinh">Hoạt hình</a></li>
-                <li class="nav-item"><a class="nav-link {% if currentRoute == 'sap-chieu' %}active{% endif %}"
-                        href="/loc/sap-chieu">Sắp chiếu</a></li>
+                <li class="nav-item"><a class="nav-link {% if currentRoute == 'phim-hay' %}active{% endif %}"
+                        href="/loc/phim-hay">Phim hay</a></li>
 
                 <!-- Dropdown thể loại -->
                    <li class="nav-item dropdown">
@@ -51,19 +52,19 @@
                         data-bs-toggle="dropdown" aria-expanded="false">
                         Quốc gia
                     </a>
-                    <ul class="dropdown-menu dropdown-large p-3" aria-labelledby="countryDropdown">
-                        <div class="container">
-                            <div class="row row-cols-2 row-cols-md-3 g-2">
-                                {% for country in countries %}
-                                <a class="dropdown-item text-danger" href="/loc/{{ country.slug }}">{{ country.name
-                                    }}</a>
-                                {% endfor %}
-
+                    <div class="dropdown-menu dropdown-genres p-3" aria-labelledby="countryDropdown">
+                        <div class="container ">
+                        <div class="row row-cols-2 row-cols-md-4 g-2">
+                            {% for country in countries %}
+                            <div class="col ms-4">
+                            <a class="dropdown-item text-white" href="/loc/{{ country.slug }}">{{ country.name }}</a>
                             </div>
+                            {% endfor %}
                         </div>
-                    </ul>
+                        </div>
+                    </div>
+                    </li>
 
-                </li>
             </ul>
 
             </li>
@@ -73,6 +74,7 @@
                 {% endfor %}
             </ul>
             </ul>
+            
 
             <!-- Tìm kiếm -->
             <form id="searchForm" class="search-form ms-auto">

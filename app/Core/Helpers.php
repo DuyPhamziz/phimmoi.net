@@ -8,31 +8,29 @@ use Twig\Loader\FilesystemLoader;
 class Helpers
 {
     public static function render($view, $data = [])
-    {
-        // Khởi tạo loader cho Twig
-        $loader = new FilesystemLoader(__DIR__ . '/../Views');
-        $twig = new Environment($loader, [
-            'debug' => true,
-            'cache' => false,
-        ]);
+{
+    // Lấy shared data từ BaseController
+    $base = new \App\Controllers\BaseController();
+    $shared = $base->getSharedData();
 
-        // Lấy session người dùng (nếu có)
-        $data['session'] = $_SESSION ?? [];
+    // Gộp tất cả
+    $data = array_merge($data, $shared);
 
-        // Kết nối cơ sở dữ liệu
-        $pdo = \App\Core\Database::connect();
+    // Session và genres giữ nguyên
+    $data['session'] = $_SESSION ?? [];
 
-        // Lấy danh sách thể loại để đổ vào menu
-        $stmt = $pdo->prepare("SELECT name_tag AS name, slug_tag AS slug FROM tags ORDER BY name_tag ASC");
-        $stmt->execute();
-        $genres = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    $pdo = \App\Core\Database::connect();
+    $stmt = $pdo->prepare("SELECT name_tag AS name, slug_tag AS slug FROM tags ORDER BY name_tag ASC");
+    $stmt->execute();
+    $genres = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    $data['genres'] = $genres;
 
-        // Truyền genres vào tất cả các trang
-        $data['genres'] = $genres;
+    echo (new \Twig\Environment(
+        new \Twig\Loader\FilesystemLoader(__DIR__ . '/../views'),
+        ['debug' => true, 'cache' => false]
+    ))->render($view . '.twig', $data);
+}
 
-        // Hiển thị view
-        echo $twig->render($view . '.twig', $data);
-    }
 
     public static function redirect($path = '/')
     {

@@ -90,6 +90,25 @@ class Category
     $stmt->execute(['slug' => $slug_category]);
     return $stmt->fetch(PDO::FETCH_ASSOC);
 }
+public function countAll() {
+    $stmt = $this->db->query("SELECT COUNT(*) FROM categories");
+    return $stmt->fetchColumn();
+}
+
+public function getPaginated($limit, $offset) {
+    $limit = (int)$limit;
+    $offset = (int)$offset;
+
+    $sql = "SELECT c.*,
+                   (SELECT COUNT(*) FROM movie_categories mc WHERE mc.category_id = c.id) AS movie_count
+            FROM categories c
+            LIMIT $limit OFFSET $offset";
+
+    $stmt = $this->db->query($sql);
+    return $stmt->fetchAll();
+}
+
+
 
 
 }

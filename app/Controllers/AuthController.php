@@ -7,12 +7,13 @@ use App\Models\User;
 use App\Core\Database;
 use App\Core\Helpers;
 
-class AuthController {
+class AuthController extends BaseController {
     protected $userModel;
     protected $google;
 
     public function __construct()
     {
+        parent::__construct();
         $this->google = new GoogleAuth();
         $this->userModel = new User(Database::connect());
     }

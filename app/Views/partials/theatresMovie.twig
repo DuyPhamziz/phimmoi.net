@@ -1,0 +1,79 @@
+<!-- hotMovie.twig (hoặc .php nếu đang dùng PHP thô) -->
+<style>
+  .hover-effect {
+    transition: transform 0.3s ease, opacity 0.3s ease;
+  }
+
+  .hover-effect:hover {
+    transform: scale(1.05);
+    opacity: 0.9;
+    z-index: 2;
+  }
+
+  .movie-card-img {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+  }
+
+  @media (min-width: 768px) {
+    .movie-card-img {
+      aspect-ratio: 2 / 3;
+    }
+  }
+</style>
+
+<div class="container px-2 mx-auto my-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="text-white fw-bold text-uppercase">Phim bộ</h4>
+    <a href="/loc/phim-bo" class="btn btn-sm btn-secondary">Xem tất cả</a>
+  </div>
+
+  {% if theatresMovie|length >= 1 %}
+  <!-- Phim nổi bật -->
+  <div class="row g-3 mb-4">
+    <div class="col-12">
+      <div class="card bg-dark text-white border-0 position-relative overflow-hidden hover-effect">
+        <a href="/{{ theatresMovie[1].slug_movie | e }}" class="text-decoration-none d-block">
+          <img src="{{ theatresMovie[1].banner_url | e }}" class="w-100 object-fit-cover"
+            style="max-height: 400px; object-position: center;" alt="{{ theatresMovie[1].name_vn | e }}">
+          <span class="badge bg-danger position-absolute top-0 start-0 rounded-0 px-2 py-1">
+            {{ theatresMovie[1].quality | default('Full | Vietsub | FHD') }}
+          </span>
+          <div class="card-img-overlay d-flex flex-column justify-content-end p-3"
+            style="background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);">
+            <h3 class="fw-bold mb-1">{{ theatresMovie[1].name_vn | e }}</h3>
+            <p class="mb-0 small">{{ theatresMovie[1].name_eng | e }}</p>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Các phim khác -->
+  <div class="row g-3">
+    {% for i in 1..12 %}
+    {% if theatresMovie[i] is defined %}
+    {% set mv = theatresMovie[i] %}
+    <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+      <div class="card bg-dark text-white border-0 position-relative hover-effect h-100">
+        <a href="/{{ mv.slug_movie | e }}" class="text-decoration-none d-block">
+          <img src="{{ mv.poster_url | default(mv.banner_url) | e }}" class="movie-card-img rounded-top"
+            alt="{{ mv.name_vn | e }}">
+          <span class="badge bg-danger position-absolute top-0 start-0 rounded-0 px-2 py-1">
+            {{ mv.quality | default('Full | Vietsub | Full HD') }}
+          </span>
+          <div class="p-2">
+            <h6 class="card-title text-white fw-semibold text-truncate mb-0">{{ mv.name_vn | e }}</h6>
+          </div>
+        </a>
+      </div>
+    </div>
+    {% endif %}
+    {% endfor %}
+  </div>
+
+  {% else %}
+  <p class="text-white">Cần ít nhất 1 phim để hiển thị phần này.</p>
+  {% endif %}
+</div>

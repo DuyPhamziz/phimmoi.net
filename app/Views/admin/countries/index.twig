@@ -40,7 +40,7 @@
             </form>
         </div>
     </div>
-    {% if countries is not empty %}
+    {% if countriesPag is not empty %}
     <table class="table table-striped table-bordered align-middle shadow-sm">
         <thead class="table-dark">
             <tr>
@@ -52,7 +52,7 @@
             </tr>
         </thead>
         <tbody>
-            {% for country in countries %}
+            {% for country in countriesPag %}
             <tr>
                 <td>{{ loop.index }}</td>
                 <td>{{ country.name|e }}</td>
@@ -105,6 +105,12 @@
             {% endfor %}
         </tbody>
     </table>
+    {% include 'layouts/pagination.twig' with {
+  totalPages: totalPages,
+  currentPage: currentPage,
+  baseUrl: baseUrl
+} %}
+
     {% else %}
     <div class="alert alert-info">Chưa có quốc gia nào nào.</div>
     {% endif %}

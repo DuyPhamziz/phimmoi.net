@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Core;
+use Twig\Extension\DebugExtension;
 
 class Twig
 {
@@ -13,7 +14,7 @@ class Twig
             'debug' => true,
             'cache' => false,
         ]);
-
+$twig->addExtension(new DebugExtension());
         echo $twig->render($template, $data);
     }
 

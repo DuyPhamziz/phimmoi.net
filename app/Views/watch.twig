@@ -5,13 +5,6 @@
 {% block content %}
 <main id="watch">
 
-    <nav class="container" style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="#">Home</a></li>
-            <li class="breadcrumb-item text-white active" aria-current="page">Library</li>
-        </ol>
-    </nav>
-
     <div class="container">
         <div class="row">
             <div class="col-md-8">
@@ -23,28 +16,29 @@
                     </video>
                 </div>
 
-                <div class="title-movie">
-                    <div class="d-flex">
-                        <h3>{{ movie.name_vn | e }}</h3>
-                        <span class="badge bg-info text-dark custom-small text-white">{{ movie.year | e }}</span>
+                <div class="title-movie text-white p-3 rounded-3" style="background: linear-gradient(145deg, #0d1b2a, #1b263b);">
+                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-2">
+                        <h3 class="mb-1 mb-md-0" style="font-weight: bold;">{{ movie.name_vn | e }}</h3>
+                        <span class="badge bg-info text-dark" style="font-size: 0.85rem;">{{ movie.year | e }}</span>
                     </div>
-                    <div class="d-flex">
-                        <p class="fst-italic text-white">{{ movie.name_eng | e }}</p>
-                        <div class="d-flex gap-2">
+                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+                        <p class="fst-italic mb-2 mb-md-0">{{ movie.name_eng | e }}</p>
+                        <div class="d-flex flex-wrap gap-2">
                             {% for cat in category %}
-                            <span class="badge bg-warning text-dark custom-small text-white">{{ cat.name_cat | e
-                                }}</span>
+                            <span class="badge bg-warning text-dark" style="font-size: 0.75rem;">{{ cat.name_cat | e }}</span>
                             {% endfor %}
                         </div>
                     </div>
                 </div>
-
-                <div class="text-white pb-3">
-                    <div class="fs-3 px-3 rounded-2" style="background-color:#132538;">Các tập phim</div>
-                    <div class="bg-dark px-3">
+                
+                <div class="text-white pb-3 mt-3">
+                    <div class="fs-5 px-3 py-2 rounded-2 mb-2" style="background-color: #132538; font-weight: 500;">
+                        Các tập phim
+                    </div>
+                    <div class="bg-dark px-3 py-2 rounded-2 d-flex flex-wrap gap-2">
                         {% for epForMovie in epForMovie %}
-                        <a href="/{{ movie.slug_movie | e }}/{{ epForMovie.episode_number | e }}"
-                            class="btn btn-episode text-decoration-none">
+                        <a href="/{{ movie.slug_movie | e }}/{{ epForMovie.episode_number | e }}" class="btn btn-sm btn-outline-light"
+                            style="min-width: 40px; font-size: 0.85rem;">
                             {{ epForMovie.episode_number | e }}
                         </a>
                         {% endfor %}
@@ -208,11 +202,17 @@
         const episodeID = '{{ currentEp.id }}';
         const askedResumeKey = `askedResume_${movieID}_${episodeID}`;
         const savedProgress = parseInt('{{ save_progress|default(0) }}', 10);
+        const hours = Math.floor(savedProgress / 3600);
+        const minutes = Math.floor((savedProgress % 3600) / 60);
+        const seconds = savedProgress % 60;
 
         const shouldAskToResume = !sessionStorage.getItem(askedResumeKey) && savedProgress > 0;
 
         if (shouldAskToResume) {
-            document.getElementById('resumeTime').textContent = savedProgress + ' giây';
+            document.getElementById('resumeTime').textContent =
+                `${hours.toString().padStart(2, '0')} giờ ` +
+                `${minutes.toString().padStart(2, '0')} phút ` +
+                `${seconds.toString().padStart(2, '0')} giây`;
             const resumeModal = new bootstrap.Modal(document.getElementById("resumeModal"));
             resumeModal.show();
 
@@ -279,6 +279,31 @@
                     console.error("Fetch error:", err);
                 });
             }
+        });
+        function hideControls() {
+            player.removeAttribute('controls');
+        }
+
+        function showControls() {
+            player.setAttribute('controls', 'controls');
+        }
+
+        player.addEventListener('mousemove', () => {
+            showControls();
+            clearTimeout(timeout);
+            timeout = setTimeout(() => {
+                if (!player.paused) {
+                    hideControls();
+                }
+            }, 3000); // 3 giây không di chuột sẽ ẩn controls
+        });
+
+        // Đảm bảo hiện controls khi pause
+        player.addEventListener('pause', showControls);
+
+        // Ẩn lại khi play
+        player.addEventListener('play', () => {
+            timeout = setTimeout(hideControls, 3000);
         });
         // Hiển thị thêm bình luận cấp 1
         document.querySelector(".toggle-more-comments")?.addEventListener("click", function () {

@@ -24,11 +24,24 @@ class TagController extends BaseAdminController
         $this->EpisodeModel = new Episode();
         $this->TagModel = new Tag();
     }
-    public function index()
-    {
-        $tags = $this->TagModel->getAllTags();
-        $this->render('admin/tags/index', compact('tags'));
-    }
+    public function index($page = 1)
+{
+    $perPage = 10;
+    $currentPage = max((int)$page, 1);
+    $offset = ($currentPage - 1) * $perPage;
+
+    $totalTags = $this->TagModel->countAll(); // -> đếm tổng số tag
+    $tags = $this->TagModel->getPaginated($perPage, $offset); // -> lấy theo phân trang
+    $totalPages = ceil($totalTags / $perPage);
+
+    $this->render('admin/tags/index', [
+        'tags' => $tags,
+        'currentPage' => $currentPage,
+        'totalPages' => $totalPages,
+        'baseUrl' => '/admin/tags'
+    ]);
+}
+
     public function create()
     {
         if ($_SERVER['REQUEST_METHOD'] === "POST") {

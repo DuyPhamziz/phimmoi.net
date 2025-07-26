@@ -6,13 +6,14 @@ use App\Core\Helpers;
 use App\Models\Tag;
 use App\Models\Movie;
 
-class CategoryController
+class CategoryController extends BaseController
 {
     protected $tagModel;
     protected $movieModel;
 
     public function __construct()
     {
+        parent::__construct();
         $this->tagModel = new Tag(); // Model bảng tags
         $this->movieModel = new Movie(); // Model bảng movies
     }
