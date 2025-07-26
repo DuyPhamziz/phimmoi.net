@@ -26,7 +26,7 @@ class Helpers
     $data['genres'] = $genres;
 
     echo (new \Twig\Environment(
-        new \Twig\Loader\FilesystemLoader(__DIR__ . '/../views'),
+        new \Twig\Loader\FilesystemLoader(__DIR__ . '/../Views'),
         ['debug' => true, 'cache' => false]
     ))->render($view . '.twig', $data);
 }
